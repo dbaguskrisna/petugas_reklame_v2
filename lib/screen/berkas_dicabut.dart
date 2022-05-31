@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../main.dart';
+
 class BerkasDiCabut extends StatefulWidget {
   const BerkasDiCabut({Key? key}) : super(key: key);
 
@@ -9,6 +11,13 @@ class BerkasDiCabut extends StatefulWidget {
 }
 
 class _BerkasDiCabutState extends State<BerkasDiCabut> {
+  void doLogout() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove("user_id");
+    prefs.remove("username");
+    main();
+  }
+
   List list = ["Halo 2", "Halo 3", "Halo 4"];
 
   @override
@@ -63,7 +72,7 @@ class _BerkasDiCabutState extends State<BerkasDiCabut> {
               leading: Icon(Icons.exit_to_app),
               title: Text('Log Out'),
               onTap: () {
-                Navigator.pushNamed(context, '/');
+                doLogout();
               },
             ),
           ],

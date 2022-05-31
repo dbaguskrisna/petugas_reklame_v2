@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../main.dart';
+
 class BerkasKurang extends StatefulWidget {
   const BerkasKurang({Key? key}) : super(key: key);
 
@@ -9,6 +11,13 @@ class BerkasKurang extends StatefulWidget {
 }
 
 class _BerkasKurangState extends State<BerkasKurang> {
+  void doLogout() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove("user_id");
+    prefs.remove("username");
+    main();
+  }
+
   List list = ["Halo 1", "Halo 2", "Halo 3"];
 
   @override
@@ -63,7 +72,7 @@ class _BerkasKurangState extends State<BerkasKurang> {
               leading: Icon(Icons.exit_to_app),
               title: Text('Log Out'),
               onTap: () {
-                Navigator.pushNamed(context, '/');
+                doLogout();
               },
             ),
           ],

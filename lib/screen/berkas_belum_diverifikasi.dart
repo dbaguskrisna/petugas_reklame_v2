@@ -1,8 +1,10 @@
 import 'dart:convert';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:petugas_ereklame/class/kecamatan.dart';
+
+import '../main.dart';
 
 class BerkasBelumDiVerifikasi extends StatefulWidget {
   const BerkasBelumDiVerifikasi({Key? key}) : super(key: key);
@@ -13,6 +15,13 @@ class BerkasBelumDiVerifikasi extends StatefulWidget {
 }
 
 class _BerkasBelumDiVerifikasiState extends State<BerkasBelumDiVerifikasi> {
+  void doLogout() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove("user_id");
+    prefs.remove("username");
+    main();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,7 +74,7 @@ class _BerkasBelumDiVerifikasiState extends State<BerkasBelumDiVerifikasi> {
                 leading: Icon(Icons.exit_to_app),
                 title: Text('Log Out'),
                 onTap: () {
-                  Navigator.pushNamed(context, '/');
+                  doLogout();
                 },
               ),
             ],

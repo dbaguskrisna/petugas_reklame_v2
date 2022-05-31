@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../main.dart';
+
 class BerkasSudahDiVerifikasi extends StatefulWidget {
   const BerkasSudahDiVerifikasi({Key? key}) : super(key: key);
 
@@ -10,6 +12,13 @@ class BerkasSudahDiVerifikasi extends StatefulWidget {
 }
 
 class _BerkasSudahDiVerifikasiState extends State<BerkasSudahDiVerifikasi> {
+  void doLogout() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove("user_id");
+    prefs.remove("username");
+    main();
+  }
+
   List list = ["Halo 1", "Halo 2", "Halo 3"];
   @override
   Widget build(BuildContext context) {
@@ -63,7 +72,7 @@ class _BerkasSudahDiVerifikasiState extends State<BerkasSudahDiVerifikasi> {
               leading: Icon(Icons.exit_to_app),
               title: Text('Log Out'),
               onTap: () {
-                Navigator.pushNamed(context, '/');
+                doLogout();
               },
             ),
           ],
