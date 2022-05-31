@@ -15,24 +15,28 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   String _user_id = "";
   String _user_password = "";
+  final _formKey = GlobalKey<FormState>();
 
   void doLogin() async {
     final response = await http.post(
         Uri.parse("http://10.0.2.2:8000/api/login_petugas"),
         body: {'username': _user_id, 'password': _user_password});
+
     if (response.statusCode == 200) {
       Map json = jsonDecode(response.body);
       if (json['result'] == 'success') {
         final prefs = await SharedPreferences.getInstance();
         prefs.setString("user_id", json['data'][0]['nama_petugas']);
         prefs.setString("username", json['data'][0]['username']);
-        print(json['data'][0]['nama_petugas']);
+        prefs.setString("status", json['data'][0]['status']);
+        prefs.setString(
+            "id_petugas", json['data'][0]['id_petugas_wastib'].toString());
         main();
       } else {
-        print("Error tidak dapat login");
+        print("error");
       }
     } else {
-      throw Exception('Failed to read API');
+      print("failed to read API");
     }
   }
 
@@ -40,7 +44,9 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return MaterialApp(
         home: Scaffold(
-      body: ListView(
+            body: Form(
+      key: _formKey,
+      child: ListView(
         children: <Widget>[
           Container(
               alignment: Alignment.center,
@@ -62,7 +68,7 @@ class _LoginState extends State<Login> {
               )),
           Container(
             padding: EdgeInsets.all(10),
-            child: TextField(
+            child: TextFormField(
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Username',
@@ -70,11 +76,17 @@ class _LoginState extends State<Login> {
               onChanged: (v) {
                 _user_id = v;
               },
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Mohon masukkan username';
+                }
+                return null;
+              },
             ),
           ),
           Container(
             padding: EdgeInsets.fromLTRB(10, 10, 10, 15),
-            child: TextField(
+            child: TextFormField(
               obscureText: true,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
@@ -82,6 +94,12 @@ class _LoginState extends State<Login> {
               ),
               onChanged: (v) {
                 _user_password = v;
+              },
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Mohon masukkan password';
+                }
+                return null;
               },
             ),
           ),
@@ -91,11 +109,13 @@ class _LoginState extends State<Login> {
               child: ElevatedButton(
                 child: Text('Login'),
                 onPressed: () {
-                  doLogin();
+                  if (_formKey.currentState!.validate()) {
+                    doLogin();
+                  }
                 },
               )),
         ],
       ),
-    ));
+    )));
   }
 }

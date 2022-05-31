@@ -13,40 +13,6 @@ class BerkasBelumDiVerifikasi extends StatefulWidget {
 }
 
 class _BerkasBelumDiVerifikasiState extends State<BerkasBelumDiVerifikasi> {
-  List<Kecamatan> listKecamatan = [];
-
-  String _temp = 'waiting API respond…';
-  Future<String> fetchData() async {
-    final response =
-        await http.get(Uri.parse("http://10.0.2.2:8000/api/master_kecamatan"));
-    if (response.statusCode == 200) {
-      return response.body;
-    } else {
-      throw Exception('Failed to read API');
-    }
-  }
-
-  bacaData() {
-    listKecamatan.clear();
-    Future<String> data = fetchData();
-    data.then((value) {
-      Map json = jsonDecode(value);
-      for (var mov in json["data"]) {
-        Kecamatan pm = Kecamatan.fromJson(mov);
-        listKecamatan.add(pm);
-      }
-      setState(() {
-        _temp = listKecamatan[1].nama_kecamatan;
-      });
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    bacaData();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -106,29 +72,7 @@ class _BerkasBelumDiVerifikasiState extends State<BerkasBelumDiVerifikasi> {
           ),
         ),
         body: Center(
-            child: ListView.builder(
-                itemCount: listKecamatan.length,
-                itemBuilder: (BuildContext ctxt, int index) {
-                  return new Card(
-                      child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      ListTile(
-                        leading: Icon(Icons.movie, size: 50),
-                        title: GestureDetector(
-                            child: Text(
-                                listKecamatan[index].id_kecamatan.toString()),
-                            onTap: () {}),
-                        subtitle: Column(
-                          children: [
-                            Text(listKecamatan[index].nama_kecamatan),
-                            ElevatedButton(
-                                onPressed: () {}, child: Text("Add to cart"))
-                          ],
-                        ),
-                      ),
-                    ],
-                  ));
-                })));
+          child: Text("Halo"),
+        ));
   }
 }

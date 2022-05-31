@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
-
+import 'package:petugas_ereklame/screen/profile_wastib.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../main.dart';
+import 'berkas_belum_diverifikasi.dart';
+import 'berkas_dicabut.dart';
+import 'berkas_kurang.dart';
+import 'berkas_sudah_diverifikasi.dart';
 import 'login.dart';
+import 'lokasi_reklame.dart';
+import 'main_page.dart';
+import 'masukkan_data_survey.dart';
 
 class MainPageVerifikator extends StatefulWidget {
   const MainPageVerifikator({Key? key}) : super(key: key);
@@ -10,6 +19,13 @@ class MainPageVerifikator extends StatefulWidget {
 }
 
 class _MainPageVerifikatorState extends State<MainPageVerifikator> {
+  void doLogout() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove("user_id");
+    prefs.remove("username");
+    main();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -32,7 +48,7 @@ class _MainPageVerifikatorState extends State<MainPageVerifikator> {
                 leading: Icon(Icons.close),
                 title: Text('Berkas Belum di Verifikasi'),
                 onTap: () {
-                  Navigator.pushNamed(context, '/berkas-belum-diverifikasi');
+                  Navigator.pushNamed(context, '/lokasi-reklame');
                 },
               ),
               ListTile(
@@ -57,7 +73,7 @@ class _MainPageVerifikatorState extends State<MainPageVerifikator> {
                 leading: Icon(Icons.exit_to_app),
                 title: Text('Log Out'),
                 onTap: () {
-                  Navigator.pushNamed(context, '/');
+                  doLogout();
                 },
               ),
             ],

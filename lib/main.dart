@@ -13,6 +13,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 String active_user = "";
 String active_username = "";
+String id_wastib = "";
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   checkUser().then((String result) {
@@ -27,7 +29,18 @@ void main() {
           active_username = result2;
         }
       });
-      runApp(MyApp());
+      checkStatus().then((String status) {
+        if (status == 'wastib') {
+          checkIdWastib().then((String id) {
+            id_wastib = id;
+            print("WASTIB");
+            runApp(MyApp());
+          });
+        } else {
+          print("VERIFIKATOR");
+          runApp(MainPageVerifikator());
+        }
+      });
     }
   });
 }
@@ -42,6 +55,18 @@ Future<String> checkUsername() async {
   final prefs = await SharedPreferences.getInstance();
   String username = prefs.getString("username") ?? '';
   return username;
+}
+
+Future<String> checkStatus() async {
+  final prefs = await SharedPreferences.getInstance();
+  String status = prefs.getString("status") ?? '';
+  return status;
+}
+
+Future<String> checkIdWastib() async {
+  final prefs = await SharedPreferences.getInstance();
+  String status = prefs.getString("id_petugas") ?? '';
+  return status;
 }
 
 class MyApp extends StatelessWidget {
