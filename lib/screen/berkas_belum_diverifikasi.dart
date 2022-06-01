@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:petugas_ereklame/class/reklame.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -15,11 +16,47 @@ class BerkasBelumDiVerifikasi extends StatefulWidget {
 }
 
 class _BerkasBelumDiVerifikasiState extends State<BerkasBelumDiVerifikasi> {
+  List<Reklame> Reklames = [];
+
   void doLogout() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.remove("user_id");
     prefs.remove("username");
     main();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    bacaData();
+  }
+
+  String _temp = 'waiting API respond…';
+
+  bacaData() {
+    Reklames.clear();
+    Future<String> data = fetchData();
+    data.then((value) {
+      Map json = jsonDecode(value);
+      print(json['data']);
+      for (var mov in json['data']) {
+        Reklame pm = Reklame.fromJson(mov);
+        Reklames.add(pm);
+      }
+      setState(() {});
+    });
+  }
+
+  Future<String> fetchData() async {
+    final response = await http.post(
+        Uri.parse("http://10.0.2.2:8000/api/read_reklame_belum_di_verifikasi"),
+        body: {'user': active_username});
+    if (response.statusCode == 200) {
+      return response.body;
+    } else {
+      throw Exception('Failed to read API');
+    }
   }
 
   @override
@@ -80,8 +117,79 @@ class _BerkasBelumDiVerifikasiState extends State<BerkasBelumDiVerifikasi> {
             ],
           ),
         ),
-        body: Center(
-          child: Text("Halo"),
+        body: ListView(
+          children: <Widget>[
+            Container(
+              height: MediaQuery.of(context).size.height,
+              child: DaftarPopMovie(Reklames),
+            ),
+          ],
         ));
+  }
+
+  Widget DaftarPopMovie(PopMovs) {
+    if (PopMovs != null) {
+      return ListView.builder(
+          itemCount: PopMovs.length,
+          itemBuilder: (BuildContext ctxt, int index) {
+            return new Card(
+                child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                ListTile(
+                  title: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Nomor Formulir : ' +
+                            Reklames[index].no_formulir.toString(),
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      IconButton(
+                          onPressed: () {
+                            showDialog<String>(
+                                context: context,
+                                builder: (BuildContext context) => AlertDialog(
+                                      title: const Text('Peringatan'),
+                                      content: Text(
+                                          'Apakah Yakin Akan Menghapus Berkas ' +
+                                              Reklames[index]
+                                                  .no_formulir
+                                                  .toString() +
+                                              " ? "),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context, 'Cancel'),
+                                          child: const Text('Cancel'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context, 'OK'),
+                                          child: const Text('OK'),
+                                        ),
+                                      ],
+                                    ));
+                          },
+                          icon: Icon(Icons.delete, size: 20))
+                    ],
+                  ),
+                  subtitle: Text(
+                    'Status Pengajuan : ' + Reklames[index].status.toString(),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    ElevatedButton(
+                        onPressed: () {}, child: Text("Lihat Detail"))
+                  ],
+                ),
+              ],
+            ));
+          });
+    } else {
+      return CircularProgressIndicator();
+    }
   }
 }
