@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:petugas_ereklame/class/kecamatan.dart';
 
 import '../main.dart';
+import 'lihat_detail_belum_diverifikasi.dart';
 
 class BerkasBelumDiVerifikasi extends StatefulWidget {
   const BerkasBelumDiVerifikasi({Key? key}) : super(key: key);
@@ -182,7 +183,17 @@ class _BerkasBelumDiVerifikasiState extends State<BerkasBelumDiVerifikasi> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     ElevatedButton(
-                        onPressed: () {}, child: Text("Lihat Detail"))
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  (LihatDetailBelumDiverifikasi(
+                                      reklame_id: Reklames[index].id_reklame)),
+                            ),
+                          );
+                        },
+                        child: Text("Lihat Detail"))
                   ],
                 ),
               ],

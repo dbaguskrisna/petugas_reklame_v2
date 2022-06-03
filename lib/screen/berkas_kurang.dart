@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:petugas_ereklame/class/reklame.dart';
+import 'package:petugas_ereklame/screen/lihat_Detail_reklame_berkas_kurang.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../main.dart';
@@ -58,7 +59,7 @@ class _BerkasKurangState extends State<BerkasKurang> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Berkas Sudah di Verifikasi"),
+          title: Text("Berkas Kurang"),
         ),
         drawer: Drawer(
           child: ListView(
@@ -177,7 +178,16 @@ class _BerkasKurangState extends State<BerkasKurang> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     ElevatedButton(
-                        onPressed: () {}, child: Text("Lihat Detail"))
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => (LihatDetailBerkasKurang(
+                                  reklame_id: Reklames[index].id_reklame)),
+                            ),
+                          );
+                        },
+                        child: Text("Lihat Detail"))
                   ],
                 ),
               ],

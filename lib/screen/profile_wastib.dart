@@ -23,17 +23,17 @@ class _ProfileWastibState extends State<ProfileWastib> {
   final alamat = TextEditingController(text: profileWastibs?.alamat);
   final _formKey = GlobalKey<FormState>();
 
-  @override
-  void initState() {
-    super.initState();
-    bacaData();
-  }
-
   void doLogout() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.remove("user_id");
     prefs.remove("username");
     main();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    bacaData();
   }
 
   bacaData() {

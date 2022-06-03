@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -7,6 +6,7 @@ import 'package:petugas_ereklame/class/maps.dart';
 import '../main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:geolocator/geolocator.dart';
 
 class LokasiReklame extends StatefulWidget {
   const LokasiReklame({Key? key}) : super(key: key);
@@ -16,12 +16,16 @@ class LokasiReklame extends StatefulWidget {
 }
 
 class _LokasiReklameState extends State<LokasiReklame> {
+  var locationMessage = "";
+
   List<Maps> listMaps = [];
   String _txtCari = "";
 
   LatLng marker = LatLng(0, 0);
 
   List<Marker> lisMarkers = [];
+  double latitude = 0.0;
+  double longitude = 0.0;
 
   void doLogout() async {
     final prefs = await SharedPreferences.getInstance();
@@ -30,10 +34,66 @@ class _LokasiReklameState extends State<LokasiReklame> {
     main();
   }
 
+  /// Determine the current position of the device.
+  ///
+  /// When the location services are not enabled or permissions
+  /// are denied the `Future` will return an error.
+  Future<Position> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Location services are not enabled don't continue
+      // accessing the position and request users of the
+      // App to enable the location services.
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Permissions are denied, next time you could try
+        // requesting permissions again (this is also where
+        // Android's shouldShowRequestPermissionRationale
+        // returned true. According to Android guidelines
+        // your App should show an explanatory UI now.
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+
+    // When we reach here, permissions are granted and we can
+    // continue accessing the position of the device.
+    return await Geolocator.getCurrentPosition();
+  }
+
+  Future<void> halo() async {
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    latitude = position.latitude;
+    longitude = position.longitude;
+    print("halo");
+    print(latitude);
+    print(longitude);
+  }
+
   @override
-  void initState() {
+  initState() {
     super.initState();
     bacaData();
+    halo();
+    print("init");
+    print(longitude);
+    print(latitude);
   }
 
   bacaData() {
@@ -41,7 +101,6 @@ class _LokasiReklameState extends State<LokasiReklame> {
     Future<String> data = fetchData();
     data.then((value) {
       Map json = jsonDecode(value);
-      print(json['data']);
       for (var mov in json['data']) {
         Maps pm = Maps.fromJson(mov);
         listMaps.add(pm);
@@ -166,8 +225,11 @@ class _LokasiReklameState extends State<LokasiReklame> {
             center: LatLng(-7.334962, 112.8011705),
             zoom: 13.0,
             onTap: (tapPosition, point) {
-              marker = point;
-              setState(() {});
+              // marker = point;
+              // setState(() {});
+              print("user real location");
+              print(latitude);
+              print(longitude);
             },
           ),
           layers: [

@@ -41,6 +41,7 @@ dev_dependencies:
   latlong2: ^0.8.0
   flutter_map: ^0.14.0
   intl: ^0.17.0
+  geolocator: ^7.7.0
 # The following section is specific to Flutter.
 flutter:
 

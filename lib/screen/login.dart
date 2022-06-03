@@ -56,7 +56,7 @@ class _LoginState extends State<Login> {
               alignment: Alignment.center,
               padding: EdgeInsets.all(10),
               child: Text(
-                'PETUGAS WASTIB',
+                'VERSI PETUGAS',
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
               )),
           Container(

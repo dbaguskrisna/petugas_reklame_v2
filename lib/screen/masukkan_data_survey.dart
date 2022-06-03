@@ -135,6 +135,9 @@ class _DataSurveyState extends State<DataSurvey> {
                 ),
               ),
               Container(
+                  padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
+                  child: Text('Tanggal : ', style: TextStyle(fontSize: 14))),
+              Container(
                   padding: EdgeInsets.all(10),
                   child: TextFormField(
                     controller:
