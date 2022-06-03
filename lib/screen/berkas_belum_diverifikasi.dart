@@ -146,33 +146,6 @@ class _BerkasBelumDiVerifikasiState extends State<BerkasBelumDiVerifikasi> {
                             Reklames[index].no_formulir.toString(),
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      IconButton(
-                          onPressed: () {
-                            showDialog<String>(
-                                context: context,
-                                builder: (BuildContext context) => AlertDialog(
-                                      title: const Text('Peringatan'),
-                                      content: Text(
-                                          'Apakah Yakin Akan Menghapus Berkas ' +
-                                              Reklames[index]
-                                                  .no_formulir
-                                                  .toString() +
-                                              " ? "),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.pop(context, 'Cancel'),
-                                          child: const Text('Cancel'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.pop(context, 'OK'),
-                                          child: const Text('OK'),
-                                        ),
-                                      ],
-                                    ));
-                          },
-                          icon: Icon(Icons.delete, size: 20))
                     ],
                   ),
                   subtitle: Text(

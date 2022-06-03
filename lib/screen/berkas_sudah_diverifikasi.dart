@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:petugas_ereklame/class/reklame.dart';
+import 'package:petugas_ereklame/screen/lihat_detail_belum_diverifikasi.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../main.dart';
@@ -140,34 +141,7 @@ class _BerkasSudahDiVerifikasiState extends State<BerkasSudahDiVerifikasi> {
                         'Nomor Formulir : ' +
                             Reklames[index].no_formulir.toString(),
                         style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      IconButton(
-                          onPressed: () {
-                            showDialog<String>(
-                                context: context,
-                                builder: (BuildContext context) => AlertDialog(
-                                      title: const Text('Peringatan'),
-                                      content: Text(
-                                          'Apakah Yakin Akan Menghapus Berkas ' +
-                                              Reklames[index]
-                                                  .no_formulir
-                                                  .toString() +
-                                              " ? "),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.pop(context, 'Cancel'),
-                                          child: const Text('Cancel'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.pop(context, 'OK'),
-                                          child: const Text('OK'),
-                                        ),
-                                      ],
-                                    ));
-                          },
-                          icon: Icon(Icons.delete, size: 20))
+                      )
                     ],
                   ),
                   subtitle: Text(
@@ -178,7 +152,17 @@ class _BerkasSudahDiVerifikasiState extends State<BerkasSudahDiVerifikasi> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     ElevatedButton(
-                        onPressed: () {}, child: Text("Lihat Detail"))
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  (LihatDetailBelumDiverifikasi(
+                                      reklame_id: Reklames[index].id_reklame)),
+                            ),
+                          );
+                        },
+                        child: Text("Lihat Detail"))
                   ],
                 ),
               ],

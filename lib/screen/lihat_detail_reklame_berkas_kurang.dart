@@ -359,29 +359,6 @@ class _LihatDetailBerkasKurangState extends State<LihatDetailBerkasKurang> {
                   textAlign: TextAlign.center,
                 )),
           ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Action : ',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-              padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-              child: ElevatedButton(
-                  onPressed: () {}, child: Text("Berkas Sudah di Verifikasi"))),
-          Container(
-              padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-              child: ElevatedButton(
-                  onPressed: () {},
-                  child: Text("Berkas Belum Lengkap Verifikasi"))),
-          Container(
-              padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
-              child: ElevatedButton(
-                  onPressed: () {}, child: Text("Berkas Sudah di Kembalikan"))),
         ],
       ),
     );

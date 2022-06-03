@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
 
-class LihatDetailBerkasDicabut extends StatefulWidget {
+class LihatDetailReklameSudahDiverifikasi extends StatefulWidget {
   final int reklame_id;
-  const LihatDetailBerkasDicabut({Key? key, required this.reklame_id})
+  const LihatDetailReklameSudahDiverifikasi(
+      {Key? key, required this.reklame_id})
       : super(key: key);
 
   @override
-  State<LihatDetailBerkasDicabut> createState() =>
-      _LihatDetailBerkasDicabutState();
+  State<LihatDetailReklameSudahDiverifikasi> createState() =>
+      _LihatDetailBelumDiverifikasiState();
 }
 
-class _LihatDetailBerkasDicabutState extends State<LihatDetailBerkasDicabut> {
+class _LihatDetailBelumDiverifikasiState
+    extends State<LihatDetailReklameSudahDiverifikasi> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Reklame Dicabut"),
+        title: Text("Berkas Sudah di Verifikasi"),
       ),
       body: ListView(
         children: <Widget>[
@@ -24,7 +26,7 @@ class _LihatDetailBerkasDicabutState extends State<LihatDetailBerkasDicabut> {
             child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Data Pemohon',
+                  'Data Pemohon : ',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                   textAlign: TextAlign.center,
                 )),
@@ -356,6 +358,16 @@ class _LihatDetailBerkasDicabutState extends State<LihatDetailBerkasDicabut> {
                 child: Text(
                   'Nama Berkas',
                   style: TextStyle(fontSize: 14),
+                  textAlign: TextAlign.center,
+                )),
+          ),
+          Container(
+            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+            child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Action : ',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                   textAlign: TextAlign.center,
                 )),
           ),
