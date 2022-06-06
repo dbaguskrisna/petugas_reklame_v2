@@ -45,7 +45,7 @@ class _BerkasSudahDiVerifikasiState extends State<BerkasSudahDiVerifikasi> {
 
   Future<String> fetchData() async {
     final response = await http.post(
-      Uri.parse("http://10.0.2.2:8000/api/read_reklame_belum_di_verifikasi"),
+      Uri.parse("http://10.0.2.2:8000/api/read_reklame_sudah_di_verifikasi"),
     );
     if (response.statusCode == 200) {
       return response.body;

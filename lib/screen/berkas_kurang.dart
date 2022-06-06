@@ -44,7 +44,7 @@ class _BerkasKurangState extends State<BerkasKurang> {
 
   Future<String> fetchData() async {
     final response = await http.post(
-      Uri.parse("http://10.0.2.2:8000/api/read_reklame_belum_di_verifikasi"),
+      Uri.parse("http://10.0.2.2:8000/api/read_reklame_kurang"),
     );
     if (response.statusCode == 200) {
       return response.body;
@@ -167,7 +167,7 @@ class _BerkasKurangState extends State<BerkasKurang> {
             ));
           });
     } else {
-      return CircularProgressIndicator();
+      return Text("Kosong");
     }
   }
 }

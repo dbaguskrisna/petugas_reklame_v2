@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class LihatDetailBelumDiverifikasi extends StatefulWidget {
   final int reklame_id;
@@ -12,6 +15,48 @@ class LihatDetailBelumDiverifikasi extends StatefulWidget {
 
 class _LihatDetailBelumDiverifikasiState
     extends State<LihatDetailBelumDiverifikasi> {
+  void submitBerkasSudahLengkap() async {
+    final response = await http.put(
+        Uri.parse(
+            "http://10.0.2.2:8000/api/update_status_reklame_belum_diverifikasi"),
+        body: {
+          'id_reklame': widget.reklame_id.toString(),
+        });
+    if (response.statusCode == 200) {
+      Map json = jsonDecode(response.body);
+      if (json['result'] == 'success') {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Sukses Menambah Data')));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Nomor Formulir Tidak di Temukan')));
+      }
+    } else {
+      print("Failed to read API");
+    }
+  }
+
+  void submitBerkasBelumLengkap() async {
+    final response = await http.put(
+        Uri.parse(
+            "http://10.0.2.2:8000/api/update_status_reklame_berkas_kurang"),
+        body: {
+          'id_reklame': widget.reklame_id.toString(),
+        });
+    if (response.statusCode == 200) {
+      Map json = jsonDecode(response.body);
+      if (json['result'] == 'success') {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Sukses Menambah Data')));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Nomor Formulir Tidak di Temukan')));
+      }
+    } else {
+      print("Failed to read API");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -373,16 +418,53 @@ class _LihatDetailBelumDiverifikasiState
           Container(
               padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
               child: ElevatedButton(
-                  onPressed: () {}, child: Text("Berkas Sudah di Verifikasi"))),
+                onPressed: () => showDialog<String>(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                    title: const Text('Peringatan'),
+                    content: const Text(
+                        'Apakah anda yakin ingin memverifikasi berkas ini ?'),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, 'Cancel'),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          submitBerkasSudahLengkap();
+                        },
+                        child: const Text('Yakin'),
+                      ),
+                    ],
+                  ),
+                ),
+                child: const Text('Bekas Lengkap'),
+              )),
           Container(
               padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
               child: ElevatedButton(
-                  onPressed: () {},
-                  child: Text("Berkas Belum Lengkap Verifikasi"))),
-          Container(
-              padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
-              child: ElevatedButton(
-                  onPressed: () {}, child: Text("Berkas Sudah di Kembalikan"))),
+                onPressed: () => showDialog<String>(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                    title: const Text('Peringatan'),
+                    content: const Text(
+                        'Apakah anda yakin akan melakukan pengembalian pada berkas ini?'),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, 'Cancel'),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          submitBerkasBelumLengkap();
+                        },
+                        child: const Text('Berkas'),
+                      ),
+                    ],
+                  ),
+                ),
+                child: const Text('Bekas Belum Lengkap'),
+              )),
         ],
       ),
     );

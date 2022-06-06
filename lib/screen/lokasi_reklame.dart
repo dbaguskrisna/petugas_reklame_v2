@@ -1,12 +1,12 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
+
 import 'package:petugas_ereklame/class/maps.dart';
 import '../main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class LokasiReklame extends StatefulWidget {
   const LokasiReklame({Key? key}) : super(key: key);
@@ -24,8 +24,6 @@ class _LokasiReklameState extends State<LokasiReklame> {
   LatLng marker = LatLng(0, 0);
 
   List<Marker> lisMarkers = [];
-  double latitude = 0.0;
-  double longitude = 0.0;
 
   void doLogout() async {
     final prefs = await SharedPreferences.getInstance();
@@ -34,66 +32,10 @@ class _LokasiReklameState extends State<LokasiReklame> {
     main();
   }
 
-  /// Determine the current position of the device.
-  ///
-  /// When the location services are not enabled or permissions
-  /// are denied the `Future` will return an error.
-  Future<Position> _determinePosition() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    // Test if location services are enabled.
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      // Location services are not enabled don't continue
-      // accessing the position and request users of the
-      // App to enable the location services.
-      return Future.error('Location services are disabled.');
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        // Permissions are denied, next time you could try
-        // requesting permissions again (this is also where
-        // Android's shouldShowRequestPermissionRationale
-        // returned true. According to Android guidelines
-        // your App should show an explanatory UI now.
-        return Future.error('Location permissions are denied');
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      // Permissions are denied forever, handle appropriately.
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
-    }
-
-    // When we reach here, permissions are granted and we can
-    // continue accessing the position of the device.
-    return await Geolocator.getCurrentPosition();
-  }
-
-  Future<void> halo() async {
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-
-    latitude = position.latitude;
-    longitude = position.longitude;
-    print("halo");
-    print(latitude);
-    print(longitude);
-  }
-
   @override
   initState() {
     super.initState();
     bacaData();
-    halo();
-    print("init");
-    print(longitude);
-    print(latitude);
   }
 
   bacaData() {
@@ -101,6 +43,7 @@ class _LokasiReklameState extends State<LokasiReklame> {
     Future<String> data = fetchData();
     data.then((value) {
       Map json = jsonDecode(value);
+      print(json['data']);
       for (var mov in json['data']) {
         Maps pm = Maps.fromJson(mov);
         listMaps.add(pm);
@@ -111,42 +54,9 @@ class _LokasiReklameState extends State<LokasiReklame> {
     });
   }
 
-  void addMaps() {
-    listMaps.forEach((Maps maps) {
-      lisMarkers.add(Marker(
-          width: 70.0,
-          height: 70.0,
-          point: LatLng(
-              double.parse(maps.latitude), double.parse(maps.longtitude)),
-          builder: (ctx) => Container(
-              child: IconButton(
-                  icon: Icon(Icons.location_on),
-                  color: Colors.red,
-                  onPressed: () => showDialog<String>(
-                      context: context,
-                      builder: (BuildContext context) => AlertDialog(
-                            title: const Text('Notifikasi'),
-                            content: Text("Reklame dengan Nomor Formulir" +
-                                maps.no_formulir.toString()),
-                            actions: <Widget>[
-                              TextButton(
-                                onPressed: () =>
-                                    Navigator.pop(context, 'Keluar'),
-                                child: const Text('Cancel'),
-                              ),
-                              TextButton(
-                                onPressed: () {},
-                                child: const Text('Yakin'),
-                              ),
-                            ],
-                          ))))));
-    });
-  }
-
   Future<String> fetchData() async {
-    final response = await http.post(
-        Uri.parse("http://10.0.2.2:8000/api/read_maps_petugas"),
-        body: {'user': active_username});
+    final response = await http
+        .post(Uri.parse("http://10.0.2.2:8000/api/read_maps_petugas"));
     if (response.statusCode == 200) {
       return response.body;
     } else {
@@ -154,7 +64,55 @@ class _LokasiReklameState extends State<LokasiReklame> {
     }
   }
 
+  void addMaps() {
+    print("halo ini add maps");
+    listMaps.forEach((Maps maps) {
+      lisMarkers.add(
+        Marker(
+          //add second marker
+          markerId: MarkerId(maps.id_reklame.toString()),
+          position: LatLng(double.parse(maps.latitude),
+              double.parse(maps.longtitude)), //position of marker
+          infoWindow: InfoWindow(
+            //popup info
+            title: "Nomor Formulir : " + maps.no_formulir.toString(),
+            snippet: "Status : " + checkStatus(maps.status),
+          ),
+          icon: BitmapDescriptor.defaultMarkerWithHue(
+              checkBitMapColor(maps.status)), //Icon for Marker
+        ),
+      );
+    });
+  }
+
+  double checkBitMapColor(int status) {
+    if (status == 0) {
+      return BitmapDescriptor.hueBlue;
+    } else if (status == 1) {
+      return BitmapDescriptor.hueGreen;
+    } else {
+      return BitmapDescriptor.hueRed;
+    }
+  }
+
+  String checkStatus(int status) {
+    if (status == 0) {
+      return "Dalam Proses Permohonan";
+    } else if (status == 1) {
+      return "Aktif";
+    } else {
+      return "Tidak Aktif";
+    }
+  }
+
   String _txtcari = "";
+
+  Completer<GoogleMapController> _controller = Completer();
+  static final CameraPosition _kGooglePlex = CameraPosition(
+    target: LatLng(-7.253142, 112.7236701),
+    zoom: 10.000,
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -220,25 +178,16 @@ class _LokasiReklameState extends State<LokasiReklame> {
             ],
           ),
         ),
-        body: FlutterMap(
-          options: MapOptions(
-            center: LatLng(-7.334962, 112.8011705),
-            zoom: 13.0,
-            onTap: (tapPosition, point) {
-              // marker = point;
-              // setState(() {});
-              print("user real location");
-              print(latitude);
-              print(longitude);
-            },
-          ),
-          layers: [
-            TileLayerOptions(
-              urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-              subdomains: ['a', 'b', 'c'],
-            ),
-            MarkerLayerOptions(markers: lisMarkers),
-          ],
+        body: GoogleMap(
+          mapType: MapType.normal,
+          initialCameraPosition: _kGooglePlex,
+          onMapCreated: (GoogleMapController controller) {
+            _controller.complete(controller);
+          },
+          markers: Set<Marker>.of(lisMarkers),
+          onTap: (context) {
+            print(lisMarkers);
+          },
         ));
   }
 }

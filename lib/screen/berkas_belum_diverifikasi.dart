@@ -149,7 +149,8 @@ class _BerkasBelumDiVerifikasiState extends State<BerkasBelumDiVerifikasi> {
                     ],
                   ),
                   subtitle: Text(
-                    'Status Pengajuan : ' + Reklames[index].status.toString(),
+                    'Status Pengajuan : ' +
+                        statusPengajuan(Reklames[index].status_pengajuan),
                   ),
                 ),
                 Row(
@@ -174,6 +175,14 @@ class _BerkasBelumDiVerifikasiState extends State<BerkasBelumDiVerifikasi> {
           });
     } else {
       return CircularProgressIndicator();
+    }
+  }
+
+  String statusPengajuan(int statusPengajuan) {
+    if (statusPengajuan == 1) {
+      return "Menunggu Verifikasi";
+    } else {
+      return "belum di ajukan";
     }
   }
 }

@@ -6,14 +6,15 @@ class Maps {
   int no_formulir;
   String latitude;
   String longtitude;
+  int status;
 
-  Maps({
-    required this.id_history,
-    required this.id_reklame,
-    required this.no_formulir,
-    required this.latitude,
-    required this.longtitude,
-  });
+  Maps(
+      {required this.id_history,
+      required this.id_reklame,
+      required this.no_formulir,
+      required this.latitude,
+      required this.longtitude,
+      required this.status});
 
   factory Maps.fromJson(Map<String, dynamic> json) {
     print(json['latitude']);
@@ -22,6 +23,7 @@ class Maps {
         id_reklame: json['id_reklame'],
         no_formulir: json['no_formulir'],
         latitude: json['latitude'].toString(),
-        longtitude: json['longtitude'].toString());
+        longtitude: json['longtitude'].toString(),
+        status: json['status']);
   }
 }

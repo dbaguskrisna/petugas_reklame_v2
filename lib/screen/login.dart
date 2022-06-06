@@ -16,6 +16,7 @@ class _LoginState extends State<Login> {
   String _user_id = "";
   String _user_password = "";
   final _formKey = GlobalKey<FormState>();
+  final _messangerKey = GlobalKey<ScaffoldMessengerState>();
 
   void doLogin() async {
     final response = await http.post(
@@ -33,7 +34,8 @@ class _LoginState extends State<Login> {
             "id_petugas", json['data'][0]['id_petugas_wastib'].toString());
         main();
       } else {
-        print("error");
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Username dan password tidak ditemukan')));
       }
     } else {
       print("failed to read API");
