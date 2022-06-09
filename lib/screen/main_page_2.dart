@@ -43,12 +43,14 @@ class _MainPageVerifikatorState extends State<MainPageVerifikator> {
               // Important: Remove any padding from the ListView.
               padding: EdgeInsets.zero,
               children: [
-                const DrawerHeader(
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                  ),
-                  child: Text('Drawer Header'),
-                ),
+                DrawerHeader(
+                    decoration: BoxDecoration(),
+                    child: Column(
+                      children: [
+                        Image.asset('assets/image/logo.png'),
+                        Text("Petugas Reklame")
+                      ],
+                    )),
                 ListTile(
                   leading: Icon(Icons.close),
                   title: Text('Berkas Belum di Verifikasi'),
@@ -59,17 +61,23 @@ class _MainPageVerifikatorState extends State<MainPageVerifikator> {
                 ListTile(
                   leading: Icon(Icons.checklist),
                   title: Text('Berkas Sudah di Verifikasi'),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.pushNamed(context, '/berkas-sudah-diverifikasi');
+                  },
                 ),
                 ListTile(
                   leading: Icon(Icons.exposure_minus_1),
                   title: Text('Berkas Kurang'),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.pushNamed(context, '/berkas-kurang');
+                  },
                 ),
                 ListTile(
                   leading: Icon(Icons.remove_circle),
                   title: Text('Berkas di Cabut'),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.pushNamed(context, '/berkas-di-cabut');
+                  },
                 ),
                 Divider(
                   color: Colors.grey,

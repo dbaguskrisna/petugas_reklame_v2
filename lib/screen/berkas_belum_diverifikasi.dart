@@ -40,7 +40,6 @@ class _BerkasBelumDiVerifikasiState extends State<BerkasBelumDiVerifikasi> {
     Future<String> data = fetchData();
     data.then((value) {
       Map json = jsonDecode(value);
-      print(json['data']);
       for (var mov in json['data']) {
         Reklame pm = Reklame.fromJson(mov);
         Reklames.add(pm);
@@ -71,12 +70,14 @@ class _BerkasBelumDiVerifikasiState extends State<BerkasBelumDiVerifikasi> {
             // Important: Remove any padding from the ListView.
             padding: EdgeInsets.zero,
             children: [
-              const DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                ),
-                child: Text('Drawer Header'),
-              ),
+              DrawerHeader(
+                  decoration: BoxDecoration(),
+                  child: Column(
+                    children: [
+                      Image.asset('assets/image/logo.png'),
+                      Text("Petugas Reklame")
+                    ],
+                  )),
               ListTile(
                 leading: Icon(Icons.close),
                 title: Text('Berkas Belum di Verifikasi'),

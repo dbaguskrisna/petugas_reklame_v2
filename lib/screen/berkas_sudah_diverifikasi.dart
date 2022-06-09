@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:petugas_ereklame/class/reklame.dart';
 import 'package:petugas_ereklame/screen/lihat_detail_belum_diverifikasi.dart';
+import 'package:petugas_ereklame/screen/lihat_detail_reklame_sudah_diverifikasi.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../main.dart';
@@ -67,12 +68,14 @@ class _BerkasSudahDiVerifikasiState extends State<BerkasSudahDiVerifikasi> {
             // Important: Remove any padding from the ListView.
             padding: EdgeInsets.zero,
             children: [
-              const DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                ),
-                child: Text('Drawer Header'),
-              ),
+              DrawerHeader(
+                  decoration: BoxDecoration(),
+                  child: Column(
+                    children: [
+                      Image.asset('assets/image/logo.png'),
+                      Text("Petugas Reklame")
+                    ],
+                  )),
               ListTile(
                 leading: Icon(Icons.close),
                 title: Text('Berkas Belum di Verifikasi'),
@@ -145,7 +148,8 @@ class _BerkasSudahDiVerifikasiState extends State<BerkasSudahDiVerifikasi> {
                     ],
                   ),
                   subtitle: Text(
-                    'Status Pengajuan : ' + Reklames[index].status.toString(),
+                    'Status Pengajuan : ' +
+                        statusPengajuan(Reklames[index].status),
                   ),
                 ),
                 Row(
@@ -157,7 +161,7 @@ class _BerkasSudahDiVerifikasiState extends State<BerkasSudahDiVerifikasi> {
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
-                                  (LihatDetailBelumDiverifikasi(
+                                  (LihatDetailReklameSudahDiverifikasi(
                                       reklame_id: Reklames[index].id_reklame)),
                             ),
                           );
@@ -170,6 +174,14 @@ class _BerkasSudahDiVerifikasiState extends State<BerkasSudahDiVerifikasi> {
           });
     } else {
       return CircularProgressIndicator();
+    }
+  }
+
+  String statusPengajuan(int status) {
+    if (status == 2) {
+      return "Berkas di Terima";
+    } else {
+      return "Berkas di Terima";
     }
   }
 }
