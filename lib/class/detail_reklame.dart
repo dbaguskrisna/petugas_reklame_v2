@@ -39,6 +39,7 @@ class DetailReklame {
   String letak;
   String lokasi_penempatan;
   String nama_status_tanah;
+  String token;
 
   DetailReklame(
       {required this.nama,
@@ -50,6 +51,7 @@ class DetailReklame {
       required this.no_telp_perusahaan,
       required this.npwpd,
       required this.email,
+      required this.token,
       required this.jenis_produk,
       required this.jenis_reklame,
       required this.letak,
@@ -91,6 +93,7 @@ class DetailReklame {
         no_telp_perusahaan: json['no_telp_perusahaan'],
         npwpd: json['npwpd'],
         email: json['email'],
+        token: json['token'],
         jenis_produk: json['nama_jenis_produk'],
         jenis_reklame: json['nama_jenis_reklame'],
         letak: json['letak'],

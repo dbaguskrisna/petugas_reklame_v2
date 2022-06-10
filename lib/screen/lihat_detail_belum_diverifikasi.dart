@@ -18,11 +18,47 @@ class LihatDetailBelumDiverifikasi extends StatefulWidget {
 class _LihatDetailBelumDiverifikasiState
     extends State<LihatDetailBelumDiverifikasi> {
   DetailReklame? detailReklames;
-
+  int? id;
   @override
   void initState() {
     super.initState();
     bacaData();
+  }
+
+  String constructFCMPayloadTerverifikasi(
+      String? token, String? noReklame, int? id) {
+    return jsonEncode({
+      'to': token,
+      "collapse_key": "type_a",
+      "notification": {
+        "body": id == 1
+            ? "Reklame Nomor : $noReklame Terverifikasi"
+            : "Reklame Nomor : $noReklame Belum lengkap",
+        "title": "Notifikasi eReklame"
+      },
+    });
+  }
+
+  Future<void> sendPushMessage(String _token, String noReklame, int id) async {
+    if (_token == null) {
+      print('Unable to send FCM message, no token exists.');
+      return;
+    }
+
+    try {
+      await http.post(
+        Uri.parse('https://fcm.googleapis.com/fcm/send'),
+        headers: <String, String>{
+          "Content-Type": "application/json",
+          "Authorization":
+              "key=AAAAOLaYo3U:APA91bGvi8w0CPrwkf7f_Z0KgLob7t9wjbveJK3lSHnsFx36QPe9U3VKf3uh6jJleelnTfSLuvvqnExHWxtZGLY3Q50Eiu5101smjicMaViyhtE06UGLhLLGWJdB8CK1_SDgusw4T62h"
+        },
+        body: constructFCMPayloadTerverifikasi(_token, noReklame, id),
+      );
+      print('FCM request for device sent!');
+    } catch (e) {
+      print(e);
+    }
   }
 
   void submitBerkasSudahLengkap() async {
@@ -489,6 +525,9 @@ class _LihatDetailBelumDiverifikasiState
                       ),
                       TextButton(
                         onPressed: () {
+                          id = 1;
+                          sendPushMessage(detailReklames!.token,
+                              detailReklames!.no_formulir.toString(), id!);
                           submitBerkasSudahLengkap();
                         },
                         child: const Text('Yakin'),
@@ -505,18 +544,21 @@ class _LihatDetailBelumDiverifikasiState
                   context: context,
                   builder: (BuildContext context) => AlertDialog(
                     title: const Text('Peringatan'),
-                    content: const Text(
+                    content: Text(
                         'Apakah anda yakin akan melakukan pengembalian pada berkas ini?'),
                     actions: <Widget>[
                       TextButton(
                         onPressed: () => Navigator.pop(context, 'Cancel'),
-                        child: const Text('Cancel'),
+                        child: const Text('Tidak'),
                       ),
                       TextButton(
                         onPressed: () {
+                          id = 2;
+                          sendPushMessage(detailReklames!.token,
+                              detailReklames!.no_formulir.toString(), id!);
                           submitBerkasBelumLengkap();
                         },
-                        child: const Text('Berkas'),
+                        child: const Text('Iya'),
                       ),
                     ],
                   ),

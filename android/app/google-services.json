@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "255862389478",
+    "project_id": "ereklame-android",
+    "storage_bucket": "ereklame-android.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:255862389478:android:4d25088cb7c5b9d70f9927",
+        "android_client_info": {
+          "package_name": "com.example.petugas_ereklame"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "255862389478-5931p866419i5jrisec3mdovh6mblbih.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYOSqlbSHnnYhMTXkyV4wwwih1soiGn4w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "255862389478-5931p866419i5jrisec3mdovh6mblbih.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

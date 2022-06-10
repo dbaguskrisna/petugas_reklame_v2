@@ -41,6 +41,9 @@ dev_dependencies:
   latlong2: ^0.8.0
   intl: ^0.17.0
   google_maps_flutter: ^2.0.4
+  firebase_messaging: ^11.2.7
+  flutter_local_notifications: ^9.4.1
+  firebase_core: ^1.12.0
 # The following section is specific to Flutter.
 flutter:
 

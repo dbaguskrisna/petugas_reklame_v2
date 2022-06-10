@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:petugas_ereklame/screen/berkas_belum_diverifikasi.dart';
 import 'package:petugas_ereklame/screen/berkas_dicabut.dart';
@@ -10,12 +13,56 @@ import 'package:petugas_ereklame/screen/main_page_2.dart';
 import 'package:petugas_ereklame/screen/masukkan_data_survey.dart';
 import 'package:petugas_ereklame/screen/profile_wastib.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+//firebase pacakge
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:http/http.dart' as http;
 
 String active_user = "";
 String active_username = "";
 String id_wastib = "";
 
-void main() {
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print('Handling a background message ${message.messageId}');
+}
+
+late AndroidNotificationChannel channel;
+
+late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
+  // Set the background messaging handler early on, as a named top-level function
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  if (!kIsWeb) {
+    channel = const AndroidNotificationChannel(
+      'High Importance Notifications', // title
+      'This channel is used for important notifications.', // description
+      importance: Importance.high,
+    );
+
+    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+
+    /// Update the iOS foreground notification presentation options to allow
+    /// heads up notifications.
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+  }
+
   WidgetsFlutterBinding.ensureInitialized();
   checkUser().then((String result) {
     if (result == '')
@@ -70,7 +117,6 @@ Future<String> checkIdWastib() async {
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -104,11 +150,82 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  @override
+  void initState() {
+    super.initState();
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification?.android;
+      if (notification != null && android != null && !kIsWeb) {
+        flutterLocalNotificationsPlugin.show(
+          notification.hashCode,
+          notification.title,
+          notification.body,
+          NotificationDetails(
+            android: AndroidNotificationDetails(
+              channel.id,
+              channel.name,
+              icon: 'launch_background',
+            ),
+          ),
+        );
+      }
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('A new onMessageOpenedApp event was published!');
+      Navigator.pushNamed(
+        context,
+        '/message',
+      );
+    });
+  }
+
   void doLogout() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.remove("user_id");
     prefs.remove("username");
     main();
+  }
+
+  String constructFCMPayload(String? token) {
+    return jsonEncode({
+      'to': token,
+      "collapse_key": "type_a",
+      "notification": {
+        "body": "Swastyastu jik !",
+        "title": "Notifikasi eReklame"
+      },
+      "data": {
+        "body": "Body of Your Notification in Data",
+        "title": "Title of Your Notification in Title",
+        "key_1": "Value for key_1",
+        "key_2": "Value for key_2"
+      }
+    });
+  }
+
+  Future<void> sendPushMessage(String _token) async {
+    if (_token == null) {
+      print('Unable to send FCM message, no token exists.');
+      return;
+    }
+
+    try {
+      await http.post(
+        Uri.parse('https://fcm.googleapis.com/fcm/send'),
+        headers: <String, String>{
+          "Content-Type": "application/json",
+          "Authorization":
+              "key=AAAAOLaYo3U:APA91bGvi8w0CPrwkf7f_Z0KgLob7t9wjbveJK3lSHnsFx36QPe9U3VKf3uh6jJleelnTfSLuvvqnExHWxtZGLY3Q50Eiu5101smjicMaViyhtE06UGLhLLGWJdB8CK1_SDgusw4T62h"
+        },
+        body: constructFCMPayload(_token),
+      );
+      print('FCM request for device sent!');
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -122,12 +239,14 @@ class _MyHomePageState extends State<MyHomePage> {
           // Important: Remove any padding from the ListView.
           padding: EdgeInsets.zero,
           children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-              child: Text(''),
-            ),
+            DrawerHeader(
+                decoration: BoxDecoration(),
+                child: Column(
+                  children: [
+                    Image.asset('assets/image/logo.png'),
+                    Text("Petugas Reklame")
+                  ],
+                )),
             ListTile(
               leading: Icon(Icons.person),
               title: Text('Profile'),
@@ -166,7 +285,13 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text("Hello, Wastib"),
+            ElevatedButton(
+                onPressed: () async {
+                  String _tokenPemohon =
+                      "ccG2Tc0zSq6Yl7SOqQotSR:APA91bHh7bW9RaP-z0RYkdOsR2p0-BOVQ7Y15YKqqSDqg108Nv4eSXC8s8S67nSiqiNWaaGfynjeC4gVAYa8-IhSUeAbmkdWYMfBl74DQC4dF_8BIjuzhgPAannYRyJfTN96owB-cShm";
+                  sendPushMessage(_tokenPemohon);
+                },
+                child: Text("Send Message"))
           ],
         ),
       ),
