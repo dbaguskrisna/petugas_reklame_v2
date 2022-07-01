@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../main.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 
 class DataSurvey extends StatefulWidget {
   const DataSurvey({Key? key}) : super(key: key);
@@ -18,11 +20,60 @@ class _DataSurveyState extends State<DataSurvey> {
   TextEditingController nomorFormulir = TextEditingController();
   TextEditingController beritaAcara = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  File? _image = null;
 
   void doLogout() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.remove("user_id");
     main();
+  }
+
+  /// Get from gallery
+  _imgGaleri() async {
+    final picker = ImagePicker();
+    final image = await picker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      _image = File(image!.path);
+    });
+  }
+
+  /// Get from Camera
+  _imgKamera() async {
+    final picker = ImagePicker();
+    final image = await picker.pickImage(source: ImageSource.camera);
+    setState(() {
+      _image = File(image!.path);
+    });
+  }
+
+  void _showPicker(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              color: Colors.white,
+              child: new Wrap(
+                children: <Widget>[
+                  new ListTile(
+                      tileColor: Colors.white,
+                      leading: new Icon(Icons.photo_library),
+                      title: new Text('Galeri'),
+                      onTap: () {
+                        _imgGaleri();
+                      }),
+                  new ListTile(
+                    leading: new Icon(Icons.photo_camera),
+                    title: new Text('Kamera'),
+                    onTap: () {
+                      _imgKamera();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
   }
 
   Future<String> checkUser() async {
@@ -32,25 +83,62 @@ class _DataSurveyState extends State<DataSurvey> {
   }
 
   void submit() async {
-    final response = await http
-        .post(Uri.parse("http://10.0.2.2:8000/api/insert_data_survey"), body: {
+    var request = http.MultipartRequest(
+        'POST', Uri.parse('http://10.0.2.2:8000/api/insert_data_survey'));
+    request.files.add(
+        await http.MultipartFile.fromPath('file', _image!.path.toString()));
+    print(active_username);
+    request.fields.addAll({
       'no_formulir': nomorFormulir.text,
       'id_petugas': id_wastib,
       'tanggal_survey': dateinput.text,
       'berita_acara': beritaAcara.text
     });
 
-    if (response.statusCode == 200) {
-      Map json = jsonDecode(response.body);
+    var res = await request.send();
+    var responseJSON = await http.Response.fromStream(res);
+    print(res.statusCode);
+    if (res.statusCode == 200) {
+      Map json = jsonDecode(responseJSON.body);
       if (json['result'] == 'success') {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Sukses Menambah Data')));
+        showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+                  title: const Text(
+                    'Notifikasi',
+                    textAlign: TextAlign.center,
+                  ),
+                  content: const Text(
+                    'Sukses Menambahkan Data Survey',
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, 'OK'),
+                      child: const Text('OK'),
+                    ),
+                  ],
+                ));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Nomor Formulir Tidak di Temukan')));
+        showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+                  title: const Text(
+                    'Notifikasi',
+                    textAlign: TextAlign.center,
+                  ),
+                  content: const Text(
+                    'Gagal Menambahkan Data Survey Silahkan Cek Kembali Nomor Formulir yang Anda Masukkan',
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, 'OK'),
+                      child: const Text('OK'),
+                    ),
+                  ],
+                ));
       }
     } else {
-      print("Failed to read API");
+      throw Exception('Failed to read API');
     }
   }
 
@@ -73,6 +161,13 @@ class _DataSurveyState extends State<DataSurvey> {
                       Text("Petugas Reklame")
                     ],
                   )),
+              ListTile(
+                leading: Icon(Icons.home),
+                title: Text('Home'),
+                onTap: () {
+                  Navigator.pushNamed(context, '/');
+                },
+              ),
               ListTile(
                 leading: Icon(Icons.person),
                 title: Text('Profile'),
@@ -130,7 +225,7 @@ class _DataSurveyState extends State<DataSurvey> {
                       hintText: 'Nomor Formulir', border: OutlineInputBorder()),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter some text';
+                      return 'Silahkan Masukkan Nomor Formulir';
                     }
                     return null;
                   },
@@ -178,7 +273,7 @@ class _DataSurveyState extends State<DataSurvey> {
                   child:
                       Text('Berita Acara : ', style: TextStyle(fontSize: 14))),
               Container(
-                padding: EdgeInsets.all(10),
+                padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
                 child: TextFormField(
                   controller: beritaAcara,
                   maxLines: 5,
@@ -188,22 +283,56 @@ class _DataSurveyState extends State<DataSurvey> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter some text';
+                      return 'Silahkan Masukkan Berita Acara';
                     }
                     return null;
                   },
                 ),
               ),
               Container(
+                  padding: EdgeInsets.fromLTRB(10, 20, 20, 0),
+                  child: Text('Masukkan Gambar Reklame : ',
+                      style: TextStyle(fontSize: 14))),
+              Container(
+                  padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                  child: GestureDetector(
+                      onTap: () {
+                        _showPicker(context);
+                      },
+                      child: _image == null
+                          ? Image.network(
+                              "https://cdn-icons-png.flaticon.com/512/685/685685.png",
+                              height: 150,
+                            )
+                          : Image.file(_image!))),
+              Container(
                   padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
                   child: ElevatedButton(
                     child: Text("Masukkan Data"),
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        submit();
-                        print(dateinput.text);
-                        print(beritaAcara.text);
-                        print(nomorFormulir.text);
+                        if (_image == null) {
+                          showDialog<String>(
+                              context: context,
+                              builder: (BuildContext context) => AlertDialog(
+                                    title: const Text(
+                                      'Notifikasi',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    content: const Text(
+                                      'Silahkan Masukkan Foto Kondisi Reklame Terkini',
+                                    ),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(context, 'OK'),
+                                        child: const Text('OK'),
+                                      ),
+                                    ],
+                                  ));
+                        } else {
+                          submit();
+                        }
                       }
                     },
                   )),

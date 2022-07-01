@@ -44,6 +44,10 @@ dev_dependencies:
   firebase_messaging: ^11.2.7
   flutter_local_notifications: ^9.4.1
   firebase_core: ^1.12.0
+  flutter_downloader: ^1.6.1
+  permission_handler: ^9.0.2
+  path_provider: ^2.0.2
+  image_picker: ^0.8.4+1
 # The following section is specific to Flutter.
 flutter:
 

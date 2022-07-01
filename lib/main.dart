@@ -6,6 +6,7 @@ import 'package:petugas_ereklame/screen/berkas_belum_diverifikasi.dart';
 import 'package:petugas_ereklame/screen/berkas_dicabut.dart';
 import 'package:petugas_ereklame/screen/berkas_kurang.dart';
 import 'package:petugas_ereklame/screen/berkas_sudah_diverifikasi.dart';
+import 'package:petugas_ereklame/screen/lihat_detail_data_survey.dart';
 import 'package:petugas_ereklame/screen/login.dart';
 import 'package:petugas_ereklame/screen/lokasi_reklame.dart';
 import 'package:petugas_ereklame/screen/main_page.dart';
@@ -18,6 +19,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
+
+import 'class/data_survey.dart';
 
 String active_user = "";
 String active_username = "";
@@ -134,7 +137,7 @@ class MyApp extends StatelessWidget {
         "/berkas-sudah-diverifikasi": (context) => BerkasSudahDiVerifikasi(),
         "/berkas-kurang": (context) => BerkasKurang(),
         "/berkas-di-cabut": (context) => BerkasDiCabut(),
-        "/profile-wastib": (context) => ProfileWastib()
+        "/profile-wastib": (context) => ProfileWastib(),
       },
     );
   }
@@ -150,10 +153,35 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  List<DataSurveys> listDataSurvey = [];
+
+  bacaData() {
+    listDataSurvey.clear();
+    Future<String> data = fetchData();
+    data.then((value) {
+      Map json = jsonDecode(value);
+      for (var mov in json['data']) {
+        DataSurveys pm = DataSurveys.fromJson(mov);
+        listDataSurvey.add(pm);
+      }
+      setState(() {});
+    });
+  }
+
+  Future<String> fetchData() async {
+    final response =
+        await http.post(Uri.parse("http://10.0.2.2:8000/api/read_data_survey"));
+    if (response.statusCode == 200) {
+      return response.body;
+    } else {
+      throw Exception('Failed to read API');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-
+    bacaData();
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
@@ -231,70 +259,141 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Petugas Wastib"),
-      ),
-      drawer: Drawer(
-        child: ListView(
-          // Important: Remove any padding from the ListView.
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-                decoration: BoxDecoration(),
-                child: Column(
-                  children: [
-                    Image.asset('assets/image/logo.png'),
-                    Text("Petugas Reklame")
-                  ],
-                )),
-            ListTile(
-              leading: Icon(Icons.person),
-              title: Text('Profile'),
-              onTap: () {
-                Navigator.pushNamed(context, '/profile-wastib');
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.pin_drop),
-              title: Text('Lokasi Reklame'),
-              onTap: () {
-                Navigator.pushNamed(context, '/lokasi-reklame');
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.file_copy),
-              title: Text('Masukkan Data Survey'),
-              onTap: () {
-                Navigator.pushNamed(context, '/data-survey');
-              },
-            ),
-            Divider(
-              color: Colors.grey,
-            ),
-            ListTile(
-              leading: Icon(Icons.exit_to_app),
-              title: Text('Log Out'),
-              onTap: () {
-                doLogout();
-              },
-            ),
-          ],
+        appBar: AppBar(
+          title: Text("Petugas Wastib"),
         ),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            ElevatedButton(
-                onPressed: () async {
-                  String _tokenPemohon =
-                      "ccG2Tc0zSq6Yl7SOqQotSR:APA91bHh7bW9RaP-z0RYkdOsR2p0-BOVQ7Y15YKqqSDqg108Nv4eSXC8s8S67nSiqiNWaaGfynjeC4gVAYa8-IhSUeAbmkdWYMfBl74DQC4dF_8BIjuzhgPAannYRyJfTN96owB-cShm";
-                  sendPushMessage(_tokenPemohon);
+        drawer: Drawer(
+          child: ListView(
+            // Important: Remove any padding from the ListView.
+            padding: EdgeInsets.zero,
+            children: [
+              DrawerHeader(
+                  decoration: BoxDecoration(),
+                  child: Column(
+                    children: [
+                      Image.asset('assets/image/logo.png'),
+                      Text("Petugas Reklame")
+                    ],
+                  )),
+              ListTile(
+                leading: Icon(Icons.home),
+                title: Text('Home'),
+                onTap: () {
+                  Navigator.pushNamed(context, '/');
                 },
-                child: Text("Send Message"))
-          ],
+              ),
+              ListTile(
+                leading: Icon(Icons.person),
+                title: Text('Profile'),
+                onTap: () {
+                  Navigator.pushNamed(context, '/profile-wastib');
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.pin_drop),
+                title: Text('Lokasi Reklame'),
+                onTap: () {
+                  Navigator.pushNamed(context, '/lokasi-reklame');
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.file_copy),
+                title: Text('Masukkan Data Survey'),
+                onTap: () {
+                  Navigator.pushNamed(context, '/data-survey');
+                },
+              ),
+              Divider(
+                color: Colors.grey,
+              ),
+              ListTile(
+                leading: Icon(Icons.exit_to_app),
+                title: Text('Log Out'),
+                onTap: () {
+                  doLogout();
+                },
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+        body: ListView(
+          children: <Widget>[
+            Container(
+              height: MediaQuery.of(context).size.height,
+              child: DaftarPopMovie(listDataSurvey),
+            ),
+          ],
+        ));
+  }
+
+  Widget DaftarPopMovie(PopMovs) {
+    if (PopMovs != null) {
+      return ListView.builder(
+          padding: EdgeInsets.all(5),
+          itemCount: PopMovs.length,
+          itemBuilder: (BuildContext ctxt, int index) {
+            return new Card(
+                child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                ListTile(
+                  title: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Nomor Formulir : ' +
+                            listDataSurvey[index].no_formulir.toString(),
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      IconButton(
+                          onPressed: () {
+                            showDialog<String>(
+                                context: context,
+                                builder: (BuildContext context) => AlertDialog(
+                                      title: const Text('Peringatan'),
+                                      content: Text(
+                                          'Apakah yakin ingin menghapus data survey ini ? '),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context, 'Cancel'),
+                                          child: const Text('Cancel'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {},
+                                          child: const Text('OK'),
+                                        ),
+                                      ],
+                                    ));
+                          },
+                          icon: Icon(Icons.delete, size: 20))
+                    ],
+                  ),
+                  subtitle: Text(
+                    'Tanggal Survey : ' + listDataSurvey[index].tanggal_survey,
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => (LihatDetailDataSurvey(
+                                  id_survey: listDataSurvey[index].id_survey)),
+                            ),
+                          );
+                        },
+                        child: Text("Lihat Detail Survey"))
+                  ],
+                ),
+              ],
+            ));
+          });
+    } else {
+      return CircularProgressIndicator();
+    }
   }
 }
