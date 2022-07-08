@@ -3,7 +3,7 @@ import 'dart:convert';
 class Maps {
   int id_history;
   int id_reklame;
-  int no_formulir;
+  String no_formulir;
   String latitude;
   String longtitude;
   int status;

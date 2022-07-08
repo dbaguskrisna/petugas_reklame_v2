@@ -4,9 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:petugas_ereklame/class/detail_reklame.dart';
 import 'package:http/http.dart' as http;
 
+import '../class/upload_file.dart';
+
 class LihatDetailBerkasKurang extends StatefulWidget {
   final int reklame_id;
-  const LihatDetailBerkasKurang({Key? key, required this.reklame_id})
+
+  LihatDetailBerkasKurang({Key? key, required this.reklame_id})
       : super(key: key);
 
   @override
@@ -16,11 +19,39 @@ class LihatDetailBerkasKurang extends StatefulWidget {
 
 class _LihatDetailBerkasKurangState extends State<LihatDetailBerkasKurang> {
   DetailReklame? detailReklames;
-
+  List<UploadFiles> listUpload = [];
+  TextEditingController alasan = new TextEditingController();
+  int? id;
   @override
   void initState() {
     super.initState();
     bacaData();
+    bacaDataBerkas();
+  }
+
+  bacaDataBerkas() {
+    listUpload.clear();
+    Future<String> data = fetchDataUpload();
+    data.then((value) {
+      Map json = jsonDecode(value);
+      print(json['data']);
+      for (var mov in json['data']) {
+        UploadFiles pm = UploadFiles.fromJson(mov);
+        listUpload.add(pm);
+      }
+      setState(() {});
+    });
+  }
+
+  Future<String> fetchDataUpload() async {
+    final response = await http.post(
+        Uri.parse("http://10.0.2.2:8000/api/read_upload_reklame"),
+        body: {'id_reklame': widget.reklame_id.toString()});
+    if (response.statusCode == 200) {
+      return response.body;
+    } else {
+      throw Exception('Failed to read API');
+    }
   }
 
   void submitBerkasSudahLengkap() async {
@@ -50,6 +81,7 @@ class _LihatDetailBerkasKurangState extends State<LihatDetailBerkasKurang> {
             "http://10.0.2.2:8000/api/update_status_reklame_berkas_kurang"),
         body: {
           'id_reklame': widget.reklame_id.toString(),
+          'alasan': alasan.text,
         });
     if (response.statusCode == 200) {
       Map json = jsonDecode(response.body);
@@ -85,11 +117,64 @@ class _LihatDetailBerkasKurangState extends State<LihatDetailBerkasKurang> {
     }
   }
 
+  String constructFCMPayloadTerverifikasi(
+      String? token, String? noReklame, int? id) {
+    return jsonEncode({
+      'to': token,
+      "collapse_key": "type_a",
+      "notification": {
+        "body": id == 1
+            ? "Reklame Nomor : $noReklame Terverifikasi"
+            : "Reklame Nomor : $noReklame Belum lengkap",
+        "title": "Notifikasi eReklame"
+      },
+    });
+  }
+
+  Future<void> sendPushMessage(String _token, String noReklame, int id) async {
+    if (_token == null) {
+      print('Unable to send FCM message, no token exists.');
+      return;
+    }
+
+    try {
+      await http.post(
+        Uri.parse('https://fcm.googleapis.com/fcm/send'),
+        headers: <String, String>{
+          "Content-Type": "application/json",
+          "Authorization":
+              "key=AAAAOLaYo3U:APA91bGvi8w0CPrwkf7f_Z0KgLob7t9wjbveJK3lSHnsFx36QPe9U3VKf3uh6jJleelnTfSLuvvqnExHWxtZGLY3Q50Eiu5101smjicMaViyhtE06UGLhLLGWJdB8CK1_SDgusw4T62h"
+        },
+        body: constructFCMPayloadTerverifikasi(_token, noReklame, id),
+      );
+      print('FCM request for device sent!');
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void downloadDataBerkas(int id_upload) async {
+    final response = await http
+        .post(Uri.parse("http://10.0.2.2:8000/api/download_file"), body: {
+      'id_upload': id_upload.toString(),
+    });
+    if (response.statusCode == 200) {
+      Map json = jsonDecode(response.body);
+      print(json['data']);
+    } else {
+      print("Failed to read API");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Reklame Sudah di Verifikasi"),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pushNamed(context, '/berkas-kurang'),
+        ),
+        title: Text("Berkas Kurang"),
       ),
       body: ListView(
         children: <Widget>[
@@ -100,7 +185,35 @@ class _LihatDetailBerkasKurangState extends State<LihatDetailBerkasKurang> {
                 child: Text(
                   'Nomor Formulir Reklame : ' +
                       detailReklames!.no_formulir.toString(),
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                  textAlign: TextAlign.center,
+                )),
+          ),
+          Container(
+            padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
+            child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Alasan Pengembalian : ',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: Colors.red),
+                  textAlign: TextAlign.center,
+                )),
+          ),
+          Container(
+            padding: EdgeInsets.fromLTRB(20, 2, 20, 10),
+            child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  detailReklames!.alasan,
+                  style: TextStyle(
+                    fontSize: 14,
+                  ),
                   textAlign: TextAlign.center,
                 )),
           ),
@@ -451,15 +564,53 @@ class _LihatDetailBerkasKurangState extends State<LihatDetailBerkasKurang> {
                   textAlign: TextAlign.center,
                 )),
           ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Nama Berkas',
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
+          Expanded(
+            child: SingleChildScrollView(
+              child: DataTable(
+                columns: [
+                  DataColumn(
+                    label: Text('TIPE BERKAS'),
+                  ),
+                  DataColumn(
+                    label: Text('ACTION'),
+                  ),
+                ],
+                rows: List.generate(listUpload.length, (index) {
+                  String nama_berkas = listUpload[index].jenis_berkas;
+                  return DataRow(cells: [
+                    DataCell(Text(nama_berkas)),
+                    DataCell(IconButton(
+                      icon: Icon(Icons.download),
+                      onPressed: () {
+                        showDialog<String>(
+                          context: context,
+                          builder: (BuildContext context) => AlertDialog(
+                            title: const Text('Peringatan'),
+                            content: Text(
+                                'Apakah Yakin Akan Menghapus Berkas ?' +
+                                    listUpload[index].id_upload.toString()),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () =>
+                                    Navigator.pop(context, 'Cancel'),
+                                child: const Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  downloadDataBerkas(
+                                      listUpload[index].id_upload);
+                                },
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ))
+                  ]);
+                }),
+              ),
+            ),
           ),
           Container(
             padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
@@ -487,6 +638,9 @@ class _LihatDetailBerkasKurangState extends State<LihatDetailBerkasKurang> {
                       ),
                       TextButton(
                         onPressed: () {
+                          id = 1;
+                          sendPushMessage(detailReklames!.token,
+                              detailReklames!.no_formulir.toString(), id!);
                           submitBerkasSudahLengkap();
                         },
                         child: const Text('Yakin'),
@@ -502,19 +656,26 @@ class _LihatDetailBerkasKurangState extends State<LihatDetailBerkasKurang> {
                 onPressed: () => showDialog<String>(
                   context: context,
                   builder: (BuildContext context) => AlertDialog(
-                    title: const Text('Peringatan'),
-                    content: const Text(
+                    title: const Text(
                         'Apakah anda yakin akan melakukan pengembalian pada berkas ini?'),
+                    content: TextFormField(
+                      controller: alasan,
+                      decoration: InputDecoration(
+                          hintText: ("Silahkan Tulis Alasan Pengembalian")),
+                    ),
                     actions: <Widget>[
                       TextButton(
                         onPressed: () => Navigator.pop(context, 'Cancel'),
-                        child: const Text('Cancel'),
+                        child: const Text('Tidak'),
                       ),
                       TextButton(
                         onPressed: () {
+                          id = 2;
+                          sendPushMessage(detailReklames!.token,
+                              detailReklames!.no_formulir.toString(), id!);
                           submitBerkasBelumLengkap();
                         },
-                        child: const Text('Berkas'),
+                        child: const Text('Kembalikan'),
                       ),
                     ],
                   ),

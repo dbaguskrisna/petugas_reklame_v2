@@ -178,6 +178,29 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  void deleteDataSurvey(int id_survey) async {
+    print("id reklame" + id_survey.toString());
+    final response = await http
+        .post(Uri.parse("http://10.0.2.2:8000/api/delete_data_survey"), body: {
+      'id_survey': id_survey.toString(),
+    });
+
+    if (response.statusCode == 200) {
+      Map json = jsonDecode(response.body);
+      if (json['result'] == 'success') {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Sukses Menghapus Data Reklame')));
+        bacaData();
+        setState(() {});
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Gagal Menghapus Data Reklame')));
+      }
+    } else {
+      throw Exception('Failed to read API');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -360,7 +383,11 @@ class _MyHomePageState extends State<MyHomePage> {
                                           child: const Text('Cancel'),
                                         ),
                                         TextButton(
-                                          onPressed: () {},
+                                          onPressed: () {
+                                            deleteDataSurvey(
+                                                listDataSurvey[index]
+                                                    .id_survey);
+                                          },
                                           child: const Text('OK'),
                                         ),
                                       ],

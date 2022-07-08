@@ -28,7 +28,7 @@ class DetailDataSurvey {
   int luas_reklame;
   int tinggi_reklame;
   String teks;
-  int no_formulir;
+  String no_formulir;
   int status_pengajuan;
   int status;
   String nama;

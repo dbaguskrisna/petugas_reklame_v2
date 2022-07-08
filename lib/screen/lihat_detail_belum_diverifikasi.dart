@@ -8,6 +8,7 @@ import '../class/upload_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:intl/intl.dart';
 
 class LihatDetailBelumDiverifikasi extends StatefulWidget {
   final int reklame_id;
@@ -23,6 +24,12 @@ class _LihatDetailBelumDiverifikasiState
     extends State<LihatDetailBelumDiverifikasi> {
   DetailReklame? detailReklames;
   List<UploadFiles> listUpload = [];
+  TextEditingController alasan = new TextEditingController();
+
+  String tglAwal = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  var tglAkhir = DateFormat('yyyy-MM-dd').format(DateTime(
+      DateTime.now().year + 1, DateTime.now().month, DateTime.now().day));
+
   int? id;
   @override
   void initState() {
@@ -73,6 +80,8 @@ class _LihatDetailBelumDiverifikasiState
             "http://10.0.2.2:8000/api/update_status_reklame_belum_diverifikasi"),
         body: {
           'id_reklame': widget.reklame_id.toString(),
+          'tgl_awal': tglAwal.toString(),
+          'tgl_akhir': tglAkhir.toString()
         });
     if (response.statusCode == 200) {
       Map json = jsonDecode(response.body);
@@ -94,6 +103,7 @@ class _LihatDetailBelumDiverifikasiState
             "http://10.0.2.2:8000/api/update_status_reklame_berkas_kurang"),
         body: {
           'id_reklame': widget.reklame_id.toString(),
+          'alasan': alasan.text,
         });
     if (response.statusCode == 200) {
       Map json = jsonDecode(response.body);
@@ -171,6 +181,11 @@ class _LihatDetailBelumDiverifikasiState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () =>
+              Navigator.pushNamed(context, '/berkas-belum-diverifikasi'),
+        ),
         title: Text("Reklame Belum di Verifikasi"),
       ),
       body: ListView(
@@ -625,9 +640,13 @@ class _LihatDetailBelumDiverifikasiState
                 onPressed: () => showDialog<String>(
                   context: context,
                   builder: (BuildContext context) => AlertDialog(
-                    title: const Text('Peringatan'),
-                    content: Text(
+                    title: const Text(
                         'Apakah anda yakin akan melakukan pengembalian pada berkas ini?'),
+                    content: TextFormField(
+                      controller: alasan,
+                      decoration: InputDecoration(
+                          hintText: ("Silahkan Tulis Alasan Pengembalian")),
+                    ),
                     actions: <Widget>[
                       TextButton(
                         onPressed: () => Navigator.pop(context, 'Cancel'),
@@ -640,7 +659,7 @@ class _LihatDetailBelumDiverifikasiState
                               detailReklames!.no_formulir.toString(), id!);
                           submitBerkasBelumLengkap();
                         },
-                        child: const Text('Iya'),
+                        child: const Text('Kembalikan'),
                       ),
                     ],
                   ),

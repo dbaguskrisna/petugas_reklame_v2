@@ -146,7 +146,8 @@ class _BerkasKurangState extends State<BerkasKurang> {
                     ],
                   ),
                   subtitle: Text(
-                    'Status Pengajuan : ' + Reklames[index].status.toString(),
+                    'Status Pengajuan : ' +
+                        statusPengajuan(Reklames[index].status_pengajuan),
                   ),
                 ),
                 Row(
@@ -170,6 +171,14 @@ class _BerkasKurangState extends State<BerkasKurang> {
           });
     } else {
       return Text("Kosong");
+    }
+  }
+
+  String statusPengajuan(int statusPengajuan) {
+    if (statusPengajuan == 3) {
+      return "Berkas Belum Lengkap";
+    } else {
+      return "belum di ajukan";
     }
   }
 }

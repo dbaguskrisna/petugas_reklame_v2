@@ -29,7 +29,6 @@ class _BerkasBelumDiVerifikasiState extends State<BerkasBelumDiVerifikasi> {
   @override
   void initState() {
     super.initState();
-
     bacaData();
   }
 
@@ -41,6 +40,7 @@ class _BerkasBelumDiVerifikasiState extends State<BerkasBelumDiVerifikasi> {
     data.then((value) {
       Map json = jsonDecode(value);
       for (var mov in json['data']) {
+        print(json['data']);
         Reklame pm = Reklame.fromJson(mov);
         Reklames.add(pm);
       }

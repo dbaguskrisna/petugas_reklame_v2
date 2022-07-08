@@ -22,7 +22,7 @@ class DetailReklame {
   int luas_reklame;
   int tinggi_reklame;
   String teks;
-  int no_formulir;
+  String no_formulir;
   int status_pengajuan;
   int status;
   String nama;
@@ -40,6 +40,7 @@ class DetailReklame {
   String lokasi_penempatan;
   String nama_status_tanah;
   String token;
+  String alasan;
 
   DetailReklame(
       {required this.nama,
@@ -80,7 +81,8 @@ class DetailReklame {
       required this.teks,
       required this.no_formulir,
       required this.status_pengajuan,
-      required this.status});
+      required this.status,
+      required this.alasan});
 
   factory DetailReklame.fromJson(Map<String, dynamic> json) {
     return DetailReklame(
@@ -122,6 +124,7 @@ class DetailReklame {
         teks: json['teks'],
         no_formulir: json['no_formulir'],
         status_pengajuan: json['status_pengajuan'],
-        status: json['status']);
+        status: json['status'],
+        alasan: json['alasan']);
   }
 }
