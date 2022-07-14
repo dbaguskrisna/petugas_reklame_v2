@@ -67,7 +67,7 @@ class _LihatDetailBerkasKurangState extends State<LihatDetailBerkasKurang> {
       Map json = jsonDecode(response.body);
       if (json['result'] == 'success') {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Sukses Menambah Data')));
+            .showSnackBar(SnackBar(content: Text('Berkas Lengkap')));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Nomor Formulir Tidak di Temukan')));

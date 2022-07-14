@@ -166,11 +166,35 @@ class _LihatDetailBelumDiverifikasiState
     return file;
   }
 
+  void cabutBerkas() async {
+    final response = await http
+        .put(Uri.parse("http://10.0.2.2:8000/api/cabut_berkas"), body: {
+      'id_reklame': widget.reklame_id.toString(),
+    });
+    if (response.statusCode == 200) {
+      Map json = jsonDecode(response.body);
+      if (json['result'] == 'success') {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Sukses Mencabut Berkas')));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Nomor Formulir Tidak di Temukan')));
+      }
+    } else {
+      print("Failed to read API");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Reklame Sudah di Verifikasi"),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () =>
+              Navigator.pushNamed(context, '/berkas-sudah-diverifikasi'),
+        ),
       ),
       body: ListView(
         children: <Widget>[
@@ -601,14 +625,16 @@ class _LihatDetailBelumDiverifikasiState
                   builder: (BuildContext context) => AlertDialog(
                     title: const Text('Peringatan'),
                     content: const Text(
-                        'Apakah anda yakin ingin memverifikasi berkas ini ?'),
+                        'Apakah anda yakin ingin mencabut berkas ini ?'),
                     actions: <Widget>[
                       TextButton(
                         onPressed: () => Navigator.pop(context, 'Cancel'),
-                        child: const Text('Cancel'),
+                        child: const Text('Tidak'),
                       ),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          cabutBerkas();
+                        },
                         child: const Text('Yakin'),
                       ),
                     ],

@@ -90,7 +90,7 @@ class _LihatDetailBelumDiverifikasiState
       openFile(
           url: 'http://10.0.2.2:80//eReklame//eReklame//public//data_file/' +
               json['data'],
-          filename: 'lalala');
+          filename: json['data']);
     } else {
       print("Failed to read API");
     }
@@ -108,8 +108,8 @@ class _LihatDetailBelumDiverifikasiState
     if (response.statusCode == 200) {
       Map json = jsonDecode(response.body);
       if (json['result'] == 'success') {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Sukses Menambah Data')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Mengganti Status Berkas Berhasil!')));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Nomor Formulir Tidak di Temukan')));
@@ -163,8 +163,8 @@ class _LihatDetailBelumDiverifikasiState
     if (response.statusCode == 200) {
       Map json = jsonDecode(response.body);
       if (json['result'] == 'success') {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Sukses Menambah Data')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Mengganti Status Berkas Berhasil!')));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Nomor Formulir Tidak di Temukan')));

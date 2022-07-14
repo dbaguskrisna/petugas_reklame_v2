@@ -45,7 +45,7 @@ class _BerkasDiCabutState extends State<BerkasDiCabut> {
 
   Future<String> fetchData() async {
     final response = await http.post(
-      Uri.parse("http://10.0.2.2:8000/api/read_reklame_belum_di_verifikasi"),
+      Uri.parse("http://10.0.2.2:8000/api/read_reklame_di_cabut"),
     );
     if (response.statusCode == 200) {
       return response.body;
@@ -147,7 +147,8 @@ class _BerkasDiCabutState extends State<BerkasDiCabut> {
                     ],
                   ),
                   subtitle: Text(
-                    'Status Pengajuan : ' + Reklames[index].status.toString(),
+                    'Status Pengajuan : ' +
+                        Reklames[index].status_pengajuan.toString(),
                   ),
                 ),
                 Row(
