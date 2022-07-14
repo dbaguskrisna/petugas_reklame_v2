@@ -219,8 +219,6 @@ class _LihatDetailBelumDiverifikasiState
     }
   }
 
-  List<Map> availableHobbies = [];
-  bool isChecked = false;
   @override
   Widget build(BuildContext context) {
     Color getColor(Set<MaterialState> states) {

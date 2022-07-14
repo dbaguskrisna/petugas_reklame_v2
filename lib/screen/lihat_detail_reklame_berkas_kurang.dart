@@ -20,6 +20,7 @@ class LihatDetailBerkasKurang extends StatefulWidget {
 class _LihatDetailBerkasKurangState extends State<LihatDetailBerkasKurang> {
   DetailReklame? detailReklames;
   List<UploadFiles> listUpload = [];
+  List<bool> listIsActived = [];
   TextEditingController alasan = new TextEditingController();
   int? id;
   @override
@@ -38,6 +39,7 @@ class _LihatDetailBerkasKurangState extends State<LihatDetailBerkasKurang> {
       for (var mov in json['data']) {
         UploadFiles pm = UploadFiles.fromJson(mov);
         listUpload.add(pm);
+        listIsActived.add(false);
       }
       setState(() {});
     });
@@ -168,6 +170,18 @@ class _LihatDetailBerkasKurangState extends State<LihatDetailBerkasKurang> {
 
   @override
   Widget build(BuildContext context) {
+    Color getColor(Set<MaterialState> states) {
+      const Set<MaterialState> interactiveStates = <MaterialState>{
+        MaterialState.pressed,
+        MaterialState.hovered,
+        MaterialState.focused,
+      };
+      if (states.any(interactiveStates.contains)) {
+        return Colors.blue;
+      }
+      return Colors.red;
+    }
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -574,37 +588,50 @@ class _LihatDetailBerkasKurangState extends State<LihatDetailBerkasKurang> {
                   DataColumn(
                     label: Text('ACTION'),
                   ),
+                  DataColumn(label: Text("VERIFIKASI"))
                 ],
                 rows: List.generate(listUpload.length, (index) {
                   String nama_berkas = listUpload[index].jenis_berkas;
                   return DataRow(cells: [
                     DataCell(Text(nama_berkas)),
-                    DataCell(IconButton(
-                      icon: Icon(Icons.download),
-                      onPressed: () {
-                        showDialog<String>(
-                          context: context,
-                          builder: (BuildContext context) => AlertDialog(
-                            title: const Text('Peringatan'),
-                            content: Text(
-                                'Apakah Yakin Akan Menghapus Berkas ?' +
-                                    listUpload[index].id_upload.toString()),
-                            actions: <Widget>[
-                              TextButton(
-                                onPressed: () =>
-                                    Navigator.pop(context, 'Cancel'),
-                                child: const Text('Cancel'),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  downloadDataBerkas(
-                                      listUpload[index].id_upload);
-                                },
-                                child: const Text('OK'),
-                              ),
-                            ],
-                          ),
-                        );
+                    DataCell(
+                      IconButton(
+                        icon: Icon(Icons.download),
+                        onPressed: () {
+                          showDialog<String>(
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                              title: const Text('Peringatan'),
+                              content: Text(
+                                  'Apakah Yakin Akan Menghapus Berkas ?' +
+                                      listUpload[index].id_upload.toString()),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.pop(context, 'Cancel'),
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    downloadDataBerkas(
+                                        listUpload[index].id_upload);
+                                  },
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    DataCell(Checkbox(
+                      checkColor: Colors.white,
+                      fillColor: MaterialStateProperty.resolveWith(getColor),
+                      value: listIsActived[index],
+                      onChanged: (bool? value) {
+                        setState(() {
+                          listIsActived[index] = value!;
+                        });
                       },
                     ))
                   ]);
