@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:ffi';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -6,9 +8,12 @@ import 'package:petugas_ereklame/class/detail_reklame.dart';
 import 'package:petugas_ereklame/class/reklame.dart';
 import '../class/upload_file.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:intl/intl.dart';
+import 'package:dio/dio.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:open_file/open_file.dart';
 
 class LihatDetailBelumDiverifikasi extends StatefulWidget {
   final int reklame_id;
@@ -24,6 +29,7 @@ class _LihatDetailBelumDiverifikasiState
     extends State<LihatDetailBelumDiverifikasi> {
   DetailReklame? detailReklames;
   List<UploadFiles> listUpload = [];
+  List<bool> listIsActived = [];
   TextEditingController alasan = new TextEditingController();
 
   String tglAwal = DateFormat('yyyy-MM-dd').format(DateTime.now());
@@ -32,8 +38,9 @@ class _LihatDetailBelumDiverifikasiState
 
   int? id;
   @override
-  void initState() {
+  initState() {
     super.initState();
+
     bacaData();
     bacaDataBerkas();
   }
@@ -57,7 +64,6 @@ class _LihatDetailBelumDiverifikasiState
       print('Unable to send FCM message, no token exists.');
       return;
     }
-
     try {
       await http.post(
         Uri.parse('https://fcm.googleapis.com/fcm/send'),
@@ -71,6 +77,22 @@ class _LihatDetailBelumDiverifikasiState
       print('FCM request for device sent!');
     } catch (e) {
       print(e);
+    }
+  }
+
+  void downloadDataBerkas(int id_upload) async {
+    final response = await http
+        .post(Uri.parse("http://10.0.2.2:8000/api/download_file"), body: {
+      'id_upload': id_upload.toString(),
+    });
+    if (response.statusCode == 200) {
+      Map json = jsonDecode(response.body);
+      openFile(
+          url: 'http://10.0.2.2:80//eReklame//eReklame//public//data_file/' +
+              json['data'],
+          filename: 'lalala');
+    } else {
+      print("Failed to read API");
     }
   }
 
@@ -97,6 +119,39 @@ class _LihatDetailBelumDiverifikasiState
     }
   }
 
+  Future openFile({required String url, String? filename}) async {
+    String name = "aaa";
+    print(url);
+    final file = await downloadFile(url, name);
+    if (file == null) {
+      print("halo");
+    } else {
+      print('Path:${file.path}');
+
+      OpenFile.open(file.path);
+    }
+  }
+
+  Future<File?> downloadFile(String url, String name) async {
+    print("download file");
+    final appStorage = await getApplicationDocumentsDirectory();
+    final file = File('${appStorage.path}/$name');
+
+    final response = await Dio().get(url,
+        options: Options(
+          responseType: ResponseType.bytes,
+          followRedirects: false,
+          receiveTimeout: 0,
+        ));
+
+    final raf = file.openSync(mode: FileMode.write);
+    print(response.data);
+    raf.writeFromSync(response.data);
+    await raf.close();
+
+    return file;
+  }
+
   void submitBerkasBelumLengkap() async {
     final response = await http.put(
         Uri.parse(
@@ -119,19 +174,6 @@ class _LihatDetailBelumDiverifikasiState
     }
   }
 
-  void downloadDataBerkas(int id_upload) async {
-    final response = await http
-        .post(Uri.parse("http://10.0.2.2:8000/api/download_file"), body: {
-      'id_upload': id_upload.toString(),
-    });
-    if (response.statusCode == 200) {
-      Map json = jsonDecode(response.body);
-      print(json['data']);
-    } else {
-      print("Failed to read API");
-    }
-  }
-
   bacaData() {
     fetchData().then((value) {
       Map json = jsonDecode(value);
@@ -146,10 +188,10 @@ class _LihatDetailBelumDiverifikasiState
     Future<String> data = fetchDataUpload();
     data.then((value) {
       Map json = jsonDecode(value);
-      print(json['data']);
       for (var mov in json['data']) {
         UploadFiles pm = UploadFiles.fromJson(mov);
         listUpload.add(pm);
+        listIsActived.add(false);
       }
       setState(() {});
     });
@@ -177,8 +219,22 @@ class _LihatDetailBelumDiverifikasiState
     }
   }
 
+  List<Map> availableHobbies = [];
+  bool isChecked = false;
   @override
   Widget build(BuildContext context) {
+    Color getColor(Set<MaterialState> states) {
+      const Set<MaterialState> interactiveStates = <MaterialState>{
+        MaterialState.pressed,
+        MaterialState.hovered,
+        MaterialState.focused,
+      };
+      if (states.any(interactiveStates.contains)) {
+        return Colors.blue;
+      }
+      return Colors.red;
+    }
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -558,37 +614,53 @@ class _LihatDetailBelumDiverifikasiState
                   DataColumn(
                     label: Text('ACTION'),
                   ),
+                  DataColumn(
+                    label: Text('VALIDASI'),
+                  ),
                 ],
                 rows: List.generate(listUpload.length, (index) {
                   String nama_berkas = listUpload[index].jenis_berkas;
+
                   return DataRow(cells: [
                     DataCell(Text(nama_berkas)),
-                    DataCell(IconButton(
-                      icon: Icon(Icons.download),
-                      onPressed: () {
-                        showDialog<String>(
-                          context: context,
-                          builder: (BuildContext context) => AlertDialog(
-                            title: const Text('Peringatan'),
-                            content: Text(
-                                'Apakah Yakin Akan Menghapus Berkas ?' +
-                                    listUpload[index].id_upload.toString()),
-                            actions: <Widget>[
-                              TextButton(
-                                onPressed: () =>
-                                    Navigator.pop(context, 'Cancel'),
-                                child: const Text('Cancel'),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  downloadDataBerkas(
-                                      listUpload[index].id_upload);
-                                },
-                                child: const Text('OK'),
-                              ),
-                            ],
-                          ),
-                        );
+                    DataCell(
+                      IconButton(
+                        icon: Icon(Icons.download),
+                        onPressed: () {
+                          showDialog<String>(
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                              title: const Text('Peringatan'),
+                              content: Text(
+                                  'Apakah Anda Akan Mendownload Data Berkas ?' +
+                                      listUpload[index].id_upload.toString()),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.pop(context, 'Cancel'),
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    downloadDataBerkas(
+                                        listUpload[index].id_upload);
+                                  },
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    DataCell(Checkbox(
+                      checkColor: Colors.white,
+                      fillColor: MaterialStateProperty.resolveWith(getColor),
+                      value: listIsActived[index],
+                      onChanged: (bool? value) {
+                        setState(() {
+                          listIsActived[index] = value!;
+                        });
                       },
                     ))
                   ]);

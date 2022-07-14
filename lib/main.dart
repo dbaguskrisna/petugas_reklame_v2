@@ -19,7 +19,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'class/data_survey.dart';
 
 String active_user = "";
@@ -37,6 +37,7 @@ late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp();
 
   // Set the background messaging handler early on, as a named top-level function

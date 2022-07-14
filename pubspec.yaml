@@ -48,6 +48,10 @@ dev_dependencies:
   permission_handler: ^9.0.2
   path_provider: ^2.0.2
   image_picker: ^0.8.4+1
+  dio: ^4.0.0
+  open_file: ^3.2.1
+ 
+
 # The following section is specific to Flutter.
 flutter:
 
