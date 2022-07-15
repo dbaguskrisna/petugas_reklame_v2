@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:petugas_ereklame/class/reklame.dart';
-import 'package:petugas_ereklame/screen/lihat_detail_berkas_belum_lengkap.dart';
+import 'package:petugas_ereklame/screen/lihat_detail_berkas_di_cabut.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../main.dart';
@@ -60,7 +60,7 @@ class _BerkasDiCabutState extends State<BerkasDiCabut> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Berkas Sudah di Cabut"),
+          title: Text("Berkas di Cabut"),
         ),
         drawer: Drawer(
           child: ListView(
@@ -147,8 +147,7 @@ class _BerkasDiCabutState extends State<BerkasDiCabut> {
                     ],
                   ),
                   subtitle: Text(
-                    'Status Pengajuan : ' +
-                        Reklames[index].status_pengajuan.toString(),
+                    'Status Reklame : Dicabut',
                   ),
                 ),
                 Row(
@@ -159,7 +158,7 @@ class _BerkasDiCabutState extends State<BerkasDiCabut> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => (LihatDetailBerkasDicabut(
+                              builder: (context) => (LihatDetailBerkasDiCabut(
                                   reklame_id: Reklames[index].id_reklame)),
                             ),
                           );
