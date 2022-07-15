@@ -284,7 +284,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Petugas Wastib"),
+          title: Text("Data Survey Reklame"),
         ),
         drawer: Drawer(
           child: ListView(
@@ -300,8 +300,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     ],
                   )),
               ListTile(
-                leading: Icon(Icons.home),
-                title: Text('Home'),
+                leading: Icon(Icons.document_scanner),
+                title: Text('Data Survey Reklmae'),
                 onTap: () {
                   Navigator.pushNamed(context, '/');
                 },

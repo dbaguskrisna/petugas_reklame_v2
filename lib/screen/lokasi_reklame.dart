@@ -147,8 +147,8 @@ class _LokasiReklameState extends State<LokasiReklame> {
                     ],
                   )),
               ListTile(
-                leading: Icon(Icons.home),
-                title: Text('Home'),
+                leading: Icon(Icons.document_scanner),
+                title: Text('Data Survey Reklmae'),
                 onTap: () {
                   Navigator.pushNamed(context, '/');
                 },

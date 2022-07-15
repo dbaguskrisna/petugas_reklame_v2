@@ -146,7 +146,7 @@ class _DataSurveyState extends State<DataSurvey> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Petugas Wastib"),
+          title: Text("Masukkan Data Survey"),
         ),
         drawer: Drawer(
           child: ListView(
@@ -162,8 +162,8 @@ class _DataSurveyState extends State<DataSurvey> {
                     ],
                   )),
               ListTile(
-                leading: Icon(Icons.home),
-                title: Text('Home'),
+                leading: Icon(Icons.document_scanner),
+                title: Text('Data Survey Reklmae'),
                 onTap: () {
                   Navigator.pushNamed(context, '/');
                 },
