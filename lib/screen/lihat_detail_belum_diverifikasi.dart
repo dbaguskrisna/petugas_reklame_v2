@@ -127,7 +127,6 @@ class _LihatDetailBelumDiverifikasiState
       print("halo");
     } else {
       print('Path:${file.path}');
-
       OpenFile.open(file.path);
     }
   }

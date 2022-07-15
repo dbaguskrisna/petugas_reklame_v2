@@ -185,6 +185,38 @@ class _LihatDetailBelumDiverifikasiState
     }
   }
 
+  String constructFCMPayloadTerverifikasi(String? token, String? noReklame) {
+    return jsonEncode({
+      'to': token,
+      "collapse_key": "type_a",
+      "notification": {
+        "body": "Reklame Nomor : $noReklame di Cabut",
+        "title": "Notifikasi eReklame"
+      },
+    });
+  }
+
+  Future<void> sendPushMessage(String _token, String noReklame) async {
+    if (_token == null) {
+      print('Unable to send FCM message, no token exists.');
+      return;
+    }
+    try {
+      await http.post(
+        Uri.parse('https://fcm.googleapis.com/fcm/send'),
+        headers: <String, String>{
+          "Content-Type": "application/json",
+          "Authorization":
+              "key=AAAAOLaYo3U:APA91bGvi8w0CPrwkf7f_Z0KgLob7t9wjbveJK3lSHnsFx36QPe9U3VKf3uh6jJleelnTfSLuvvqnExHWxtZGLY3Q50Eiu5101smjicMaViyhtE06UGLhLLGWJdB8CK1_SDgusw4T62h"
+        },
+        body: constructFCMPayloadTerverifikasi(_token, noReklame),
+      );
+      print('FCM request for device sent!');
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -633,6 +665,8 @@ class _LihatDetailBelumDiverifikasiState
                       ),
                       TextButton(
                         onPressed: () {
+                          sendPushMessage(detailReklames!.token,
+                              detailReklames!.no_formulir.toString());
                           cabutBerkas();
                         },
                         child: const Text('Yakin'),
