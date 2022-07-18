@@ -43,6 +43,7 @@ class _LokasiReklameState extends State<LokasiReklame> {
     Future<String> data = fetchData();
     data.then((value) {
       Map json = jsonDecode(value);
+      print('ini data baca data');
       print(json['data']);
       for (var mov in json['data']) {
         Maps pm = Maps.fromJson(mov);
@@ -55,8 +56,9 @@ class _LokasiReklameState extends State<LokasiReklame> {
   }
 
   Future<String> fetchData() async {
-    final response = await http
-        .post(Uri.parse("http://10.0.2.2:8000/api/read_maps_petugas"));
+    final response = await http.post(
+        Uri.parse("http://10.0.2.2:8000/api/search"),
+        body: {'cari': _txtcari});
     if (response.statusCode == 200) {
       return response.body;
     } else {
@@ -66,6 +68,7 @@ class _LokasiReklameState extends State<LokasiReklame> {
 
   void addMaps() {
     print("halo ini add maps");
+    lisMarkers.clear();
     listMaps.forEach((Maps maps) {
       lisMarkers.add(
         Marker(
@@ -129,7 +132,8 @@ class _LokasiReklameState extends State<LokasiReklame> {
             style: TextStyle(color: Colors.white),
             onFieldSubmitted: (value) {
               _txtcari = value;
-              //bacaData();
+              print(_txtcari);
+              bacaData();
             },
           ),
         ),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../main.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -19,9 +20,14 @@ class _LoginState extends State<Login> {
   final _messangerKey = GlobalKey<ScaffoldMessengerState>();
 
   void doLogin() async {
-    final response = await http.post(
-        Uri.parse("http://10.0.2.2:8000/api/login_petugas"),
-        body: {'username': _user_id, 'password': _user_password});
+    String? _token = await FirebaseMessaging.instance.getToken();
+
+    final response = await http
+        .post(Uri.parse("http://10.0.2.2:8000/api/login_petugas"), body: {
+      'username': _user_id,
+      'password': _user_password,
+      'token': _token
+    });
 
     if (response.statusCode == 200) {
       Map json = jsonDecode(response.body);
@@ -110,7 +116,7 @@ class _LoginState extends State<Login> {
               padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
               child: ElevatedButton(
                 child: Text('Login'),
-                onPressed: () {
+                onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     doLogin();
                   }
