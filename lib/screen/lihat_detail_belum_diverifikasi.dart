@@ -664,9 +664,6 @@ class _LihatDetailBelumDiverifikasiState
                       onChanged: (bool? value) {
                         setState(() {
                           listIsActived[index] = value!;
-                          print(index.toString());
-                          print(listIsActived[index]);
-                          print(listIsActived);
                         });
                       },
                     ))
