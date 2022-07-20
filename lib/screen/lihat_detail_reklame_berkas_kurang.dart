@@ -45,6 +45,12 @@ class _LihatDetailBerkasKurangState extends State<LihatDetailBerkasKurang> {
     });
   }
 
+  void showNotification() async {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+            'Tidak Dapat Memproses Data, Silahkan Cek Validasi Seluruh Data Terlebih Dahulu')));
+  }
+
   Future<String> fetchDataUpload() async {
     final response = await http.post(
         Uri.parse("http://10.0.2.2:8000/api/read_upload_reklame"),
@@ -665,10 +671,14 @@ class _LihatDetailBerkasKurangState extends State<LihatDetailBerkasKurang> {
                       ),
                       TextButton(
                         onPressed: () {
-                          id = 1;
-                          sendPushMessage(detailReklames!.token,
-                              detailReklames!.no_formulir.toString(), id!);
-                          submitBerkasSudahLengkap();
+                          if (listIsActived.contains(false)) {
+                            showNotification();
+                          } else {
+                            id = 1;
+                            sendPushMessage(detailReklames!.token,
+                                detailReklames!.no_formulir.toString(), id!);
+                            submitBerkasSudahLengkap();
+                          }
                         },
                         child: const Text('Yakin'),
                       ),

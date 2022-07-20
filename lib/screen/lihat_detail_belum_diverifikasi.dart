@@ -14,6 +14,7 @@ import 'package:intl/intl.dart';
 import 'package:dio/dio.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:open_file/open_file.dart';
+import 'package:checkbox_formfield/checkbox_formfield.dart';
 
 class LihatDetailBelumDiverifikasi extends StatefulWidget {
   final int reklame_id;
@@ -180,6 +181,12 @@ class _LihatDetailBelumDiverifikasiState
       detailReklames = DetailReklame.fromJson(json['data'][0]);
       setState(() {});
     });
+  }
+
+  void showNotification() async {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+            'Tidak Dapat Memproses Data, Silahkan Cek Validasi Seluruh Data Terlebih Dahulu')));
   }
 
   bacaDataBerkas() {
@@ -657,6 +664,9 @@ class _LihatDetailBelumDiverifikasiState
                       onChanged: (bool? value) {
                         setState(() {
                           listIsActived[index] = value!;
+                          print(index.toString());
+                          print(listIsActived[index]);
+                          print(listIsActived);
                         });
                       },
                     ))
@@ -691,10 +701,14 @@ class _LihatDetailBelumDiverifikasiState
                       ),
                       TextButton(
                         onPressed: () {
-                          id = 1;
-                          sendPushMessage(detailReklames!.token,
-                              detailReklames!.no_formulir.toString(), id!);
-                          submitBerkasSudahLengkap();
+                          if (listIsActived.contains(false)) {
+                            showNotification();
+                          } else {
+                            id = 1;
+                            sendPushMessage(detailReklames!.token,
+                                detailReklames!.no_formulir.toString(), id!);
+                            submitBerkasSudahLengkap();
+                          }
                         },
                         child: const Text('Yakin'),
                       ),
