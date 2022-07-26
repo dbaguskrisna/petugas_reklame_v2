@@ -41,6 +41,8 @@ class DetailReklame {
   String nama_status_tanah;
   String token;
   String alasan;
+  String tgl_awal;
+  String tgl_akhir;
 
   DetailReklame(
       {required this.nama,
@@ -82,7 +84,9 @@ class DetailReklame {
       required this.no_formulir,
       required this.status_pengajuan,
       required this.status,
-      required this.alasan});
+      required this.alasan,
+      required this.tgl_akhir,
+      required this.tgl_awal});
 
   factory DetailReklame.fromJson(Map<String, dynamic> json) {
     return DetailReklame(
@@ -125,6 +129,8 @@ class DetailReklame {
         no_formulir: json['no_formulir'],
         status_pengajuan: json['status_pengajuan'],
         status: json['status'],
-        alasan: json['alasan']);
+        alasan: json['alasan'] == null ? '' : json['alasan'],
+        tgl_awal: json['tgl_berlaku_awal'],
+        tgl_akhir: json['tgl_berlaku_akhir']);
   }
 }

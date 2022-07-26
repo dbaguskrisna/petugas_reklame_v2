@@ -24,7 +24,8 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     void doLogin() async {
       String? _token = await FirebaseMessaging.instance.getToken();
-
+      print('test');
+      print(_token);
       final response = await http
           .post(Uri.parse("http://10.0.2.2:8000/api/login_petugas"), body: {
         'username': _user_id,

@@ -7,6 +7,9 @@ import '../main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:custom_info_window/custom_info_window.dart';
+
+import 'lihat_detail_reklame_maps.dart';
 
 class LokasiReklame extends StatefulWidget {
   const LokasiReklame({Key? key}) : super(key: key);
@@ -24,7 +27,8 @@ class _LokasiReklameState extends State<LokasiReklame> {
   LatLng marker = LatLng(0, 0);
 
   List<Marker> lisMarkers = [];
-
+  CustomInfoWindowController _customInfoWindowController =
+      CustomInfoWindowController();
   void doLogout() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.remove("user_id");
@@ -43,8 +47,7 @@ class _LokasiReklameState extends State<LokasiReklame> {
     Future<String> data = fetchData();
     data.then((value) {
       Map json = jsonDecode(value);
-      print('ini data baca data');
-      print(json['data']);
+
       for (var mov in json['data']) {
         Maps pm = Maps.fromJson(mov);
         listMaps.add(pm);
@@ -58,7 +61,7 @@ class _LokasiReklameState extends State<LokasiReklame> {
   Future<String> fetchData() async {
     final response = await http.post(
         Uri.parse("http://10.0.2.2:8000/api/search"),
-        body: {'cari': _txtcari});
+        body: {'no_reklame': _txtcari});
     if (response.statusCode == 200) {
       return response.body;
     } else {
@@ -76,11 +79,62 @@ class _LokasiReklameState extends State<LokasiReklame> {
           markerId: MarkerId(maps.id_reklame.toString()),
           position: LatLng(double.parse(maps.latitude),
               double.parse(maps.longtitude)), //position of marker
-          infoWindow: InfoWindow(
-            //popup info
-            title: "Nomor Formulir : " + maps.no_formulir.toString(),
-            snippet: "Status : " + checkStatus(maps.status),
-          ),
+          onTap: () {
+            _customInfoWindowController.addInfoWindow!(
+                Column(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              Text(
+                                "Nomor Formulir : " +
+                                    maps.no_formulir.toString(),
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              Text("Tgl Berkaku : " +
+                                  maps.tgl_berlaku_awal +
+                                  " s/d " +
+                                  maps.tgl_berlaku_akhir),
+                              Text("Status : " + checkStatus(maps.status)),
+                              Container(
+                                padding: EdgeInsets.all(5),
+                                child: Align(
+                                  child: ElevatedButton(
+                                      child: Text('Lihat Detail'),
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                (LihatDetailReklameMaps(
+                                                    reklame_id:
+                                                        maps.id_reklame)),
+                                          ),
+                                        );
+                                      }),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        width: double.infinity,
+                        height: double.infinity,
+                      ),
+                    ),
+                  ],
+                ),
+                LatLng(
+                  double.parse(maps.latitude),
+                  double.parse(maps.longtitude),
+                ));
+          },
           icon: BitmapDescriptor.defaultMarkerWithHue(
               checkBitMapColor(maps.status)), //Icon for Marker
         ),
@@ -191,16 +245,27 @@ class _LokasiReklameState extends State<LokasiReklame> {
             ],
           ),
         ),
-        body: GoogleMap(
-          mapType: MapType.normal,
-          initialCameraPosition: _kGooglePlex,
-          onMapCreated: (GoogleMapController controller) {
-            _controller.complete(controller);
-          },
-          markers: Set<Marker>.of(lisMarkers),
-          onTap: (context) {
-            print(lisMarkers);
-          },
-        ));
+        body: Stack(children: <Widget>[
+          GoogleMap(
+            onTap: (position) {
+              _customInfoWindowController.hideInfoWindow!();
+            },
+            onCameraMove: (position) {
+              _customInfoWindowController.onCameraMove!();
+            },
+            onMapCreated: (GoogleMapController controller) async {
+              _customInfoWindowController.googleMapController = controller;
+            },
+            mapType: MapType.normal,
+            initialCameraPosition: _kGooglePlex,
+            markers: Set<Marker>.of(lisMarkers),
+          ),
+          CustomInfoWindow(
+            controller: _customInfoWindowController,
+            height: 130,
+            width: 300,
+            offset: 50,
+          ),
+        ]));
   }
 }
