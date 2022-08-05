@@ -641,8 +641,8 @@ class _LihatDetailBelumDiverifikasiState
                               actions: <Widget>[
                                 TextButton(
                                   onPressed: () =>
-                                      Navigator.pop(context, 'Cancel'),
-                                  child: const Text('Cancel'),
+                                      Navigator.pop(context, 'Batal'),
+                                  child: const Text('Batal'),
                                 ),
                                 TextButton(
                                   onPressed: () {
@@ -730,7 +730,7 @@ class _LihatDetailBelumDiverifikasiState
                     actions: <Widget>[
                       TextButton(
                         onPressed: () => Navigator.pop(context, 'Cancel'),
-                        child: const Text('Tidak'),
+                        child: const Text('Batal'),
                       ),
                       TextButton(
                         onPressed: () {

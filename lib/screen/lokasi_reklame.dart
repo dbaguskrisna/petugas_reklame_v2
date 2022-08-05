@@ -180,7 +180,7 @@ class _LokasiReklameState extends State<LokasiReklame> {
                 Icons.search,
                 color: Colors.white,
               ),
-              labelText: "Cari Lokasi",
+              labelText: "Masukkan Nomor Lokasi",
               labelStyle: TextStyle(color: Colors.white),
             ),
             style: TextStyle(color: Colors.white),

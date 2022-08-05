@@ -233,12 +233,7 @@ class _LihatDetailBerkasDiCabutState extends State<LihatDetailBerkasDiCabut> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () =>
-              Navigator.pushNamed(context, '/berkas-belum-diverifikasi'),
-        ),
-        title: Text("Reklame Belum di Verifikasi"),
+        title: Text("Berkas Reklame dicabut"),
       ),
       body: ListView(
         children: <Widget>[
@@ -651,76 +646,6 @@ class _LihatDetailBerkasDiCabutState extends State<LihatDetailBerkasDiCabut> {
               ),
             ),
           ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Action : ',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-              padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-              child: ElevatedButton(
-                onPressed: () => showDialog<String>(
-                  context: context,
-                  builder: (BuildContext context) => AlertDialog(
-                    title: const Text('Peringatan'),
-                    content: const Text(
-                        'Apakah anda yakin ingin memverifikasi berkas ini ?'),
-                    actions: <Widget>[
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, 'Cancel'),
-                        child: const Text('Cancel'),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          id = 1;
-                          sendPushMessage(detailReklames!.token,
-                              detailReklames!.no_formulir.toString(), id!);
-                          submitBerkasSudahLengkap();
-                        },
-                        child: const Text('Yakin'),
-                      ),
-                    ],
-                  ),
-                ),
-                child: const Text('Bekas Lengkap'),
-              )),
-          Container(
-              padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-              child: ElevatedButton(
-                onPressed: () => showDialog<String>(
-                  context: context,
-                  builder: (BuildContext context) => AlertDialog(
-                    title: const Text(
-                        'Apakah anda yakin akan melakukan pengembalian pada berkas ini?'),
-                    content: TextFormField(
-                      controller: alasan,
-                      decoration: InputDecoration(
-                          hintText: ("Silahkan Tulis Alasan Pengembalian")),
-                    ),
-                    actions: <Widget>[
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, 'Cancel'),
-                        child: const Text('Tidak'),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          id = 2;
-                          sendPushMessage(detailReklames!.token,
-                              detailReklames!.no_formulir.toString(), id!);
-                          submitBerkasBelumLengkap();
-                        },
-                        child: const Text('Kembalikan'),
-                      ),
-                    ],
-                  ),
-                ),
-                child: const Text('Bekas Belum Lengkap'),
-              )),
         ],
       ),
     );
