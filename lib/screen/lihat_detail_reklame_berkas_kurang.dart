@@ -194,7 +194,7 @@ class _LihatDetailBerkasKurangState extends State<LihatDetailBerkasKurang> {
           icon: Icon(Icons.arrow_back),
           onPressed: () => Navigator.pushNamed(context, '/berkas-kurang'),
         ),
-        title: Text("Berkas Kurang"),
+        title: Text("Berkas Belum Lengkap"),
       ),
       body: ListView(
         children: <Widget>[

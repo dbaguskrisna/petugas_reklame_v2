@@ -376,26 +376,6 @@ class _LihatDetailBelumDiverifikasiState
             child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'RT : ',
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'RW : ',
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
                   'Tahun Pendirian : ' +
                       detailReklames!.tahun_pendirian.toString(),
                   style: TextStyle(fontSize: 14),
@@ -552,7 +532,8 @@ class _LihatDetailBelumDiverifikasiState
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Panjang Reklame : ' +
-                      detailReklames!.panjang_reklame.toString(),
+                      detailReklames!.panjang_reklame.toString() +
+                      " m",
                   style: TextStyle(fontSize: 14),
                   textAlign: TextAlign.center,
                 )),
@@ -562,7 +543,9 @@ class _LihatDetailBelumDiverifikasiState
             child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Lebar Reklame : ' + detailReklames!.lebar_reklame.toString(),
+                  'Lebar Reklame : ' +
+                      detailReklames!.lebar_reklame.toString() +
+                      " m",
                   style: TextStyle(fontSize: 14),
                   textAlign: TextAlign.center,
                 )),
@@ -572,7 +555,10 @@ class _LihatDetailBelumDiverifikasiState
             child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Luas Reklame : ' + detailReklames!.luas_reklame.toString(),
+                  'Luas Reklame : ' +
+                      detailReklames!.luas_reklame.toString() +
+                      " m" +
+                      '\u00B2',
                   style: TextStyle(fontSize: 14),
                   textAlign: TextAlign.center,
                 )),
@@ -583,7 +569,8 @@ class _LihatDetailBelumDiverifikasiState
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Tinggi Reklame : ' +
-                      detailReklames!.tinggi_reklame.toString(),
+                      detailReklames!.tinggi_reklame.toString() +
+                      ' m',
                   style: TextStyle(fontSize: 14),
                   textAlign: TextAlign.center,
                 )),

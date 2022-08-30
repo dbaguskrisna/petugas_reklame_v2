@@ -47,7 +47,6 @@ class _LokasiReklameState extends State<LokasiReklame> {
     Future<String> data = fetchData();
     data.then((value) {
       Map json = jsonDecode(value);
-
       for (var mov in json['data']) {
         Maps pm = Maps.fromJson(mov);
         listMaps.add(pm);
@@ -70,7 +69,6 @@ class _LokasiReklameState extends State<LokasiReklame> {
   }
 
   void addMaps() {
-    print("halo ini add maps");
     lisMarkers.clear();
     listMaps.forEach((Maps maps) {
       lisMarkers.add(
@@ -180,7 +178,7 @@ class _LokasiReklameState extends State<LokasiReklame> {
                 Icons.search,
                 color: Colors.white,
               ),
-              labelText: "Masukkan Nomor Lokasi",
+              labelText: "Masukkan Nomor Formulir",
               labelStyle: TextStyle(color: Colors.white),
             ),
             style: TextStyle(color: Colors.white),

@@ -59,7 +59,7 @@ class _BerkasKurangState extends State<BerkasKurang> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Berkas Kurang"),
+          title: Text("Berkas Belum Lengkap"),
         ),
         drawer: Drawer(
           child: ListView(
@@ -90,7 +90,7 @@ class _BerkasKurangState extends State<BerkasKurang> {
               ),
               ListTile(
                 leading: Icon(Icons.exposure_minus_1),
-                title: Text('Berkas Kurang'),
+                title: Text('Berkas Belum Lengkap'),
                 onTap: () {
                   Navigator.pushNamed(context, '/berkas-kurang');
                 },

@@ -124,7 +124,7 @@ class _LihatDetailDataSurveyState extends State<LihatDetailDataSurvey> {
             child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Alamat : ' + detailDataSurvey!.alamat,
+                  'Alamat Perusahaan : ' + detailDataSurvey!.alamat_perusahaan,
                   style: TextStyle(fontSize: 14),
                   textAlign: TextAlign.center,
                 )),
@@ -174,27 +174,8 @@ class _LihatDetailDataSurveyState extends State<LihatDetailDataSurvey> {
             child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'RT : ',
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'RW : ',
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Tahun Pendirian : ' + detailDataSurvey!.tahun_pendirian,
+                  'Tahun Pendirian : ' +
+                      detailDataSurvey!.tahun_pendirian.toString(),
                   style: TextStyle(fontSize: 14),
                   textAlign: TextAlign.center,
                 )),

@@ -14,7 +14,7 @@ class DetailDataSurvey {
   int id_lokasi_penempatan;
   int id_status_tanah;
   int id_letak_reklame;
-  String tahun_pendirian;
+  int tahun_pendirian;
   String kecamatan;
   String kelurahan;
   int tahun_pajak;

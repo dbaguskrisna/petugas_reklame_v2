@@ -8,7 +8,6 @@ class UploadFiles {
   int id_reklame;
   int id_berkas;
   String nama_berkas;
-  int status;
   String jenis_berkas;
 
   UploadFiles(
@@ -17,7 +16,6 @@ class UploadFiles {
       required this.id_reklame,
       required this.id_berkas,
       required this.nama_berkas,
-      required this.status,
       required this.jenis_berkas});
 
   factory UploadFiles.fromJson(Map<String, dynamic> json) {
@@ -28,7 +26,6 @@ class UploadFiles {
         id_berkas: json['id_berkas'],
         nama_berkas:
             json['nama_berkas'] == null ? "kosong" : json['nama_berkas'],
-        status: json['status'],
         jenis_berkas: json['jenis_berkas']);
   }
 }

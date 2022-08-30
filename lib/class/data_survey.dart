@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 class DataSurveys {
   int id_survey;
   String no_formulir;
-  String tahun_pendirian;
+  int tahun_pendirian;
   int status;
   int id_petugas;
   String tanggal_survey;

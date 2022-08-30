@@ -106,7 +106,7 @@ class _MainPageVerifikatorState extends State<MainPageVerifikator> {
                 ),
                 ListTile(
                   leading: Icon(Icons.exposure_minus_1),
-                  title: Text('Berkas Kurang'),
+                  title: Text('Berkas Belum Lengkap'),
                   onTap: () {
                     Navigator.pushNamed(context, '/berkas-kurang');
                   },
