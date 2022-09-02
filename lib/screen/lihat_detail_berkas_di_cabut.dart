@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:petugas_ereklame/class/detail_reklame.dart';
 import 'package:petugas_ereklame/class/reklame.dart';
 import '../class/upload_file.dart';
@@ -231,423 +232,436 @@ class _LihatDetailBerkasDiCabutState extends State<LihatDetailBerkasDiCabut> {
       return Colors.red;
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Berkas Reklame dicabut"),
-      ),
-      body: ListView(
-        children: <Widget>[
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Nomor Formulir Reklame : ' +
-                      detailReklames!.no_formulir.toString(),
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
+    if (detailReklames == null) {
+      return Scaffold(
+          appBar: AppBar(
+            title: Text("Berkas Reklame Dicabut"),
           ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Data Pemohon : ',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Email : ' + detailReklames!.email,
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Nama Pemohon : ' + detailReklames!.nama,
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Alamat : ' + detailReklames!.alamat,
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Nomor Telp : ' + detailReklames!.no_hp.toString(),
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Nama Perusahaan : ' + detailReklames!.nama_perusahaan,
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Alamat : ' + detailReklames!.alamat,
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'NPWPD : ' + detailReklames!.npwpd,
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Form Detail Titik Reklame',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Nama Jalan : ' + detailReklames!.nama_jalan,
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Nomor Jalan : ' + detailReklames!.nomor_jalan.toString(),
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'RT : ',
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'RW : ',
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Tahun Pendirian : ' +
-                      detailReklames!.tahun_pendirian.toString(),
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Kecamatan : ' + detailReklames!.kecamatan,
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Kelurahan : ' + detailReklames!.kelurahan,
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Detail Lokasi : ' + detailReklames!.detail_lokasi,
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Data Objek Reklame',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Tahun Pajak : ' + detailReklames!.tahun_pajak.toString(),
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Tanggal Permohonan : ' +
-                      detailReklames!.tgl_permohonan.toString(),
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Jenis Reklame : ',
-                style: TextStyle(fontSize: 14),
-                textAlign: TextAlign.center,
+          body: Center(
+            child: LoadingAnimationWidget.staggeredDotsWave(
+              color: Colors.blue,
+              size: 80,
+            ),
+          ));
+    } else {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text("Berkas Reklame Dicabut"),
+        ),
+        body: ListView(
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
+              child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Nomor Formulir Reklame : ' +
+                        detailReklames!.no_formulir.toString(),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    textAlign: TextAlign.center,
+                  )),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
+              child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Data Pemohon : ',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    textAlign: TextAlign.center,
+                  )),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Email',
+                ),
+                initialValue: detailReklames!.email,
+                enabled: false,
               ),
             ),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                detailReklames!.jenis_reklame,
-                style: TextStyle(fontSize: 14),
-                textAlign: TextAlign.center,
+            Container(
+                padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Nama Pemohon',
+                  ),
+                  initialValue: detailReklames!.nama,
+                  enabled: false,
+                )),
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Alamat',
+                ),
+                initialValue: detailReklames!.alamat,
+                enabled: false,
               ),
             ),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Nomor Telp',
+                ),
+                initialValue: detailReklames!.no_hp.toString(),
+                enabled: false,
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Nama Perusahaan',
+                ),
+                initialValue: detailReklames!.nama_perusahaan,
+                enabled: false,
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Alamat Perusahaan',
+                ),
+                initialValue: detailReklames!.alamat_perusahaan,
+                enabled: false,
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'NPWPD',
+                ),
+                initialValue: detailReklames!.npwpd,
+                enabled: false,
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
+              child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Form Detail Titik Reklame',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    textAlign: TextAlign.center,
+                  )),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Nama Jalan',
+                ),
+                initialValue: detailReklames!.nama_jalan,
+                enabled: false,
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Email',
+                ),
+                initialValue: detailReklames!.nomor_jalan.toString(),
+                enabled: false,
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Tahun Pendirian',
+                ),
+                initialValue: detailReklames!.tahun_pendirian.toString(),
+                enabled: false,
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Kecamatan',
+                ),
+                initialValue: detailReklames!.kecamatan,
+                enabled: false,
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Kelurahan',
+                ),
+                initialValue: detailReklames!.kelurahan,
+                enabled: false,
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Detail Lokasi',
+                ),
+                initialValue: detailReklames!.detail_lokasi,
+                enabled: false,
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
+              child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Data Objek Reklame',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    textAlign: TextAlign.center,
+                  )),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Tahun Pajak',
+                ),
+                initialValue: detailReklames!.tahun_pajak.toString(),
+                enabled: false,
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Tanggal Permohonan',
+                ),
+                initialValue: detailReklames!.tgl_permohonan,
+                enabled: false,
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Email',
+                ),
+                initialValue: detailReklames!.email,
+                enabled: false,
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
+              child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Jenis Produk : ' + detailReklames!.jenis_produk,
+                  detailReklames!.jenis_reklame,
                   style: TextStyle(fontSize: 14),
                   textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Lokasi Penempatan : ' + detailReklames!.lokasi_penempatan,
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Status Tanah : ' + detailReklames!.nama_status_tanah,
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Letak Reklame : ' + detailReklames!.letak,
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Atribut Reklame Lainnya',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Sudut Pandang Reklame : ' +
-                      detailReklames!.sudut_pandang.toString(),
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Panjang Reklame : ' +
-                      detailReklames!.panjang_reklame.toString(),
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Lebar Reklame : ' + detailReklames!.lebar_reklame.toString(),
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Luas Reklame : ' + detailReklames!.luas_reklame.toString(),
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Tinggi Reklame : ' +
-                      detailReklames!.tinggi_reklame.toString(),
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Teks Reklame : ' + detailReklames!.teks,
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Berkas Reklame',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: DataTable(
-                columns: [
-                  DataColumn(
-                    label: Text('TIPE BERKAS'),
-                  ),
-                  DataColumn(
-                    label: Text('ACTION'),
-                  ),
-                ],
-                rows: List.generate(listUpload.length, (index) {
-                  String nama_berkas = listUpload[index].jenis_berkas;
-
-                  return DataRow(cells: [
-                    DataCell(Text(nama_berkas)),
-                    DataCell(
-                      IconButton(
-                        icon: Icon(Icons.download),
-                        onPressed: () {
-                          showDialog<String>(
-                            context: context,
-                            builder: (BuildContext context) => AlertDialog(
-                              title: const Text('Peringatan'),
-                              content: Text(
-                                  'Apakah Anda Akan Mendownload Data Berkas ?' +
-                                      listUpload[index].id_upload.toString()),
-                              actions: <Widget>[
-                                TextButton(
-                                  onPressed: () =>
-                                      Navigator.pop(context, 'Cancel'),
-                                  child: const Text('Cancel'),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    downloadDataBerkas(
-                                        listUpload[index].id_upload);
-                                  },
-                                  child: const Text('OK'),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
+                ),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Jenis Produk',
+                ),
+                initialValue: detailReklames!.jenis_produk,
+                enabled: false,
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Lokasi Penempatan',
+                ),
+                initialValue: detailReklames!.lokasi_penempatan,
+                enabled: false,
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Status Tanah',
+                ),
+                initialValue: detailReklames!.nama_status_tanah,
+                enabled: false,
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Letak Reklame',
+                ),
+                initialValue: detailReklames!.letak,
+                enabled: false,
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Atribut Reklame Lainnya',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    textAlign: TextAlign.center,
+                  )),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Sudut Pandang Reklame',
+                ),
+                initialValue: detailReklames!.sudut_pandang.toString(),
+                enabled: false,
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Panjang Reklame',
+                ),
+                initialValue: detailReklames!.panjang_reklame.toString() + " m",
+                enabled: false,
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Lebar Reklame',
+                ),
+                initialValue: detailReklames!.lebar_reklame.toString() + " m",
+                enabled: false,
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Jenis Produk',
+                ),
+                initialValue:
+                    detailReklames!.luas_reklame.toString() + " m" + '\u00B2',
+                enabled: false,
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Tinggi Reklame',
+                ),
+                initialValue: detailReklames!.tinggi_reklame.toString() + " m",
+                enabled: false,
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Teks Reklame',
+                ),
+                initialValue: detailReklames!.teks,
+                enabled: false,
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Berkas Reklame',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    textAlign: TextAlign.center,
+                  )),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: DataTable(
+                  columns: [
+                    DataColumn(
+                      label: Text('TIPE BERKAS'),
                     ),
-                  ]);
-                }),
+                    DataColumn(
+                      label: Text('ACTION'),
+                    ),
+                  ],
+                  rows: List.generate(listUpload.length, (index) {
+                    String nama_berkas = listUpload[index].jenis_berkas;
+
+                    return DataRow(cells: [
+                      DataCell(Text(nama_berkas)),
+                      DataCell(
+                        IconButton(
+                          icon: Icon(Icons.download),
+                          onPressed: () {
+                            showDialog<String>(
+                              context: context,
+                              builder: (BuildContext context) => AlertDialog(
+                                title: const Text('Peringatan'),
+                                content: Text(
+                                    'Apakah Anda Akan Mendownload Data Berkas ?' +
+                                        listUpload[index].id_upload.toString()),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context, 'Cancel'),
+                                    child: const Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      downloadDataBerkas(
+                                          listUpload[index].id_upload);
+                                    },
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ]);
+                  }),
+                ),
               ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    }
   }
 }

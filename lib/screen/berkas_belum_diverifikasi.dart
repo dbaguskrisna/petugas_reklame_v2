@@ -1,10 +1,11 @@
 import 'dart:convert';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:petugas_ereklame/class/reklame.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:petugas_ereklame/class/kecamatan.dart';
-
+import 'package:firebase_messaging/firebase_messaging.dart';
 import '../main.dart';
 import 'lihat_detail_belum_diverifikasi.dart';
 
@@ -34,13 +35,12 @@ class _BerkasBelumDiVerifikasiState extends State<BerkasBelumDiVerifikasi> {
 
   String _temp = 'waiting API respond…';
 
-  bacaData() {
+  bacaData() async {
     Reklames.clear();
     Future<String> data = fetchData();
     data.then((value) {
       Map json = jsonDecode(value);
       for (var mov in json['data']) {
-        print(json['data']);
         Reklame pm = Reklame.fromJson(mov);
         Reklames.add(pm);
       }
@@ -175,7 +175,16 @@ class _BerkasBelumDiVerifikasiState extends State<BerkasBelumDiVerifikasi> {
             ));
           });
     } else {
-      return CircularProgressIndicator();
+      return Scaffold(
+          appBar: AppBar(
+            title: Text("Berkas Belum Diverifikasi"),
+          ),
+          body: Center(
+            child: LoadingAnimationWidget.staggeredDotsWave(
+              color: Colors.blue,
+              size: 80,
+            ),
+          ));
     }
   }
 

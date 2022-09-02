@@ -123,6 +123,36 @@ Future<String> checkIdWastib() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    @override
+    void initState() {
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        RemoteNotification? notification = message.notification;
+        AndroidNotification? android = message.notification?.android;
+        if (notification != null && android != null && !kIsWeb) {
+          flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                channel.id,
+                channel.name,
+                icon: 'launch_background',
+              ),
+            ),
+          );
+        }
+      });
+
+      FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+        print('A new onMessageOpenedApp event was published!');
+        Navigator.pushNamed(
+          context,
+          '/message',
+        );
+      });
+    }
+
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
