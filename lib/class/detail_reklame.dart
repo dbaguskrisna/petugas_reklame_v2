@@ -27,11 +27,11 @@ class DetailReklame {
   int status;
   String nama;
   String alamat;
-  int no_hp;
+  String no_hp;
   String jabatan;
   String nama_perusahaan;
   String alamat_perusahaan;
-  int no_telp_perusahaan;
+  String no_telp_perusahaan;
   String npwpd;
   String email;
   String jenis_produk;

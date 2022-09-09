@@ -84,14 +84,14 @@ class _LoginState extends State<Login> {
                 child: TextFormField(
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
-                    labelText: 'Username',
+                    labelText: 'Email',
                   ),
                   onChanged: (v) {
                     _user_id = v;
                   },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Mohon masukkan username';
+                      return 'Mohon masukkan email';
                     }
                     return null;
                   },

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:petugas_ereklame/class/reklame.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,6 +9,10 @@ import 'package:petugas_ereklame/class/kecamatan.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import '../main.dart';
 import 'lihat_detail_belum_diverifikasi.dart';
+
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class BerkasBelumDiVerifikasi extends StatefulWidget {
   const BerkasBelumDiVerifikasi({Key? key}) : super(key: key);
@@ -20,6 +25,9 @@ class BerkasBelumDiVerifikasi extends StatefulWidget {
 class _BerkasBelumDiVerifikasiState extends State<BerkasBelumDiVerifikasi> {
   List<Reklame> Reklames = [];
 
+  late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+  late AndroidNotificationChannel channel;
+
   void doLogout() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.remove("user_id");
@@ -28,8 +36,72 @@ class _BerkasBelumDiVerifikasiState extends State<BerkasBelumDiVerifikasi> {
   }
 
   @override
-  void initState() {
+  Future<void> initState() async {
     super.initState();
+    Future<void> _firebaseMessagingBackgroundHandler(
+        RemoteMessage message) async {
+      await Firebase.initializeApp();
+      print('Handling a background message ${message.messageId}');
+    }
+
+    WidgetsFlutterBinding.ensureInitialized();
+
+    await Firebase.initializeApp();
+
+    // Set the background messaging handler early on, as a named top-level function
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+    if (!kIsWeb) {
+      channel = const AndroidNotificationChannel(
+        'High Importance Notifications', // title
+        'This channel is used for important notifications.', // description
+        importance: Importance.high,
+      );
+
+      flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
+          ?.createNotificationChannel(channel);
+
+      /// Update the iOS foreground notification presentation options to allow
+      /// heads up notifications.
+      await FirebaseMessaging.instance
+          .setForegroundNotificationPresentationOptions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+    }
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification?.android;
+      if (notification != null && android != null && !kIsWeb) {
+        flutterLocalNotificationsPlugin.show(
+          notification.hashCode,
+          notification.title,
+          notification.body,
+          NotificationDetails(
+            android: AndroidNotificationDetails(
+              channel.id,
+              channel.name,
+              icon: 'launch_background',
+            ),
+          ),
+        );
+      }
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('A new onMessageOpenedApp event was published!');
+      Navigator.pushNamed(
+        context,
+        '/message',
+      );
+    });
+
     bacaData();
   }
 
@@ -50,7 +122,8 @@ class _BerkasBelumDiVerifikasiState extends State<BerkasBelumDiVerifikasi> {
 
   Future<String> fetchData() async {
     final response = await http.post(
-        Uri.parse("http://10.0.2.2:8000/api/read_reklame_belum_di_verifikasi"),
+        Uri.parse(
+            "http://192.168.100.27:8000/api/read_reklame_belum_di_verifikasi"),
         body: {'user': active_username});
     if (response.statusCode == 200) {
       return response.body;

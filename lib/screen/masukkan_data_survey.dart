@@ -101,41 +101,12 @@ class _DataSurveyState extends State<DataSurvey> {
     if (res.statusCode == 200) {
       Map json = jsonDecode(responseJSON.body);
       if (json['result'] == 'success') {
-        showDialog<String>(
-            context: context,
-            builder: (BuildContext context) => AlertDialog(
-                  title: const Text(
-                    'Notifikasi',
-                    textAlign: TextAlign.center,
-                  ),
-                  content: const Text(
-                    'Sukses Menambahkan Data Survey',
-                  ),
-                  actions: <Widget>[
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, 'OK'),
-                      child: const Text('OK'),
-                    ),
-                  ],
-                ));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Sukses Menambahkan Data Survey')));
       } else {
-        showDialog<String>(
-            context: context,
-            builder: (BuildContext context) => AlertDialog(
-                  title: const Text(
-                    'Notifikasi',
-                    textAlign: TextAlign.center,
-                  ),
-                  content: const Text(
-                    'Gagal Menambahkan Data Survey Silahkan Cek Kembali Nomor Formulir yang Anda Masukkan',
-                  ),
-                  actions: <Widget>[
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, 'OK'),
-                      child: const Text('OK'),
-                    ),
-                  ],
-                ));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+                'Gagal Menambahkan Data Survey Silahkan Cek Kembali Nomor Formulir yang Anda Masukkan')));
       }
     } else {
       throw Exception('Failed to read API');
@@ -225,7 +196,7 @@ class _DataSurveyState extends State<DataSurvey> {
                       hintText: 'Nomor Formulir', border: OutlineInputBorder()),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Silahkan Masukkan Nomor Formulir';
+                      return 'Textbox tidak boleh kosong';
                     }
                     return null;
                   },
@@ -244,7 +215,7 @@ class _DataSurveyState extends State<DataSurvey> {
                         border: OutlineInputBorder()),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
+                        return 'Textbox tidak boleh kosong';
                       }
                       return null;
                     },
@@ -283,7 +254,7 @@ class _DataSurveyState extends State<DataSurvey> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Silahkan Masukkan Berita Acara';
+                      return 'Textbox tidak boleh kosong';
                     }
                     return null;
                   },
@@ -312,27 +283,16 @@ class _DataSurveyState extends State<DataSurvey> {
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         if (_image == null) {
-                          showDialog<String>(
-                              context: context,
-                              builder: (BuildContext context) => AlertDialog(
-                                    title: const Text(
-                                      'Notifikasi',
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    content: const Text(
-                                      'Silahkan Masukkan Foto Kondisi Reklame Terkini',
-                                    ),
-                                    actions: <Widget>[
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(context, 'OK'),
-                                        child: const Text('OK'),
-                                      ),
-                                    ],
-                                  ));
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(
+                                  'Silahkan Masukkan Foto Kondisi Reklame Terkini')));
                         } else {
                           submit();
                         }
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(
+                                'Tidak dapat menambahkan data survey, silahkan lengkapi form data survey')));
                       }
                     },
                   )),

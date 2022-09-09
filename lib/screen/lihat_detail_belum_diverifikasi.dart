@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -16,6 +17,10 @@ import 'package:dio/dio.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:open_file/open_file.dart';
 import 'package:checkbox_formfield/checkbox_formfield.dart';
+
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class LihatDetailBelumDiverifikasi extends StatefulWidget {
   final int reklame_id;
@@ -33,12 +38,14 @@ class _LihatDetailBelumDiverifikasiState
   List<UploadFiles> listUpload = [];
   List<bool> listIsActived = [];
   TextEditingController alasan = new TextEditingController();
-
+  late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+  late AndroidNotificationChannel channel;
   String tglAwal = DateFormat('yyyy-MM-dd').format(DateTime.now());
   var tglAkhir = DateFormat('yyyy-MM-dd').format(DateTime(
       DateTime.now().year + 1, DateTime.now().month, DateTime.now().day));
-
+  final _formKey = GlobalKey<FormState>();
   int? id;
+
   @override
   initState() {
     super.initState();
@@ -54,8 +61,8 @@ class _LihatDetailBelumDiverifikasiState
       "collapse_key": "type_a",
       "notification": {
         "body": id == 1
-            ? "Reklame Nomor : $noReklame Terverifikasi"
-            : "Reklame Nomor : $noReklame Belum lengkap",
+            ? "Reklame dengan Nomor Formulir : $noReklame Diterima"
+            : "Reklame dengan Nomor Formulir : $noReklame Belum lengkap, silahkan lengkapi berkas dan ajukan kembali",
         "title": "Notifikasi eReklame"
       },
     });
@@ -90,7 +97,7 @@ class _LihatDetailBelumDiverifikasiState
     if (response.statusCode == 200) {
       Map json = jsonDecode(response.body);
       openFile(
-          url: 'http://10.0.2.2:80//eReklame//eReklame//public//data_file/' +
+          url: 'http://10.0.2.2//eReklame//eReklame//public//data_file/' +
               json['data'],
           filename: json['data']);
     } else {
@@ -154,30 +161,41 @@ class _LihatDetailBelumDiverifikasiState
   }
 
   void submitBerkasBelumLengkap() async {
-    final response = await http.put(
-        Uri.parse(
-            "http://10.0.2.2:8000/api/update_status_reklame_berkas_kurang"),
-        body: {
-          'id_reklame': widget.reklame_id.toString(),
-          'alasan': alasan.text,
-        });
-    if (response.statusCode == 200) {
-      Map json = jsonDecode(response.body);
-      if (json['result'] == 'success') {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Mengganti Status Berkas Berhasil!')));
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Nomor Formulir Tidak di Temukan')));
-      }
+    if (alasan.text == null || alasan.text == '') {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          duration: Duration(seconds: 3),
+          content: Text(
+              'Silahkan Masukkan Alasan Pengembalian Berkas Terlebih Dahulu')));
     } else {
-      print("Failed to read API");
+      final response = await http.put(
+          Uri.parse(
+              "http://10.0.2.2:8000/api/update_status_reklame_berkas_kurang"),
+          body: {
+            'id_reklame': widget.reklame_id.toString(),
+            'alasan': alasan.text,
+          });
+      if (response.statusCode == 200) {
+        Map json = jsonDecode(response.body);
+        if (json['result'] == 'success') {
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Mengganti Status Berkas Berhasil!')));
+          id = 2;
+          sendPushMessage(detailReklames!.token,
+              detailReklames!.no_formulir.toString(), id!);
+        } else {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text('Gagal')));
+        }
+      } else {
+        print("Failed to read API");
+      }
     }
   }
 
   bacaData() {
     fetchData().then((value) {
       Map json = jsonDecode(value);
+      print('halo');
       print(json['data'][0]);
       detailReklames = DetailReklame.fromJson(json['data'][0]);
       setState(() {});
@@ -241,16 +259,18 @@ class _LihatDetailBelumDiverifikasiState
     }
 
     if (detailReklames == null) {
-      return Scaffold(
-          appBar: AppBar(
-            title: Text("Berkas Belum di Verifikasi"),
-          ),
-          body: Center(
-            child: LoadingAnimationWidget.staggeredDotsWave(
-              color: Colors.blue,
-              size: 80,
+      return Form(
+        child: Scaffold(
+            appBar: AppBar(
+              title: Text("Detail Berkas Belum di Verifikasi"),
             ),
-          ));
+            body: Center(
+              child: LoadingAnimationWidget.staggeredDotsWave(
+                color: Colors.blue,
+                size: 80,
+              ),
+            )),
+      );
     } else {
       return Scaffold(
         appBar: AppBar(
@@ -259,7 +279,7 @@ class _LihatDetailBelumDiverifikasiState
             onPressed: () =>
                 Navigator.pushNamed(context, '/berkas-belum-diverifikasi'),
           ),
-          title: Text("Berkas Belum di Verifikasi"),
+          title: Text("Detail Berkas Belum di Verifikasi"),
         ),
         body: ListView(
           children: <Widget>[
@@ -649,8 +669,7 @@ class _LihatDetailBelumDiverifikasiState
                               builder: (BuildContext context) => AlertDialog(
                                 title: const Text('Peringatan'),
                                 content: Text(
-                                    'Apakah Anda Akan Mendownload Data Berkas ?' +
-                                        listUpload[index].id_upload.toString()),
+                                    'Apakah Anda Akan Mendownload Data Berkas ?'),
                                 actions: <Widget>[
                                   TextButton(
                                     onPressed: () =>
@@ -662,7 +681,7 @@ class _LihatDetailBelumDiverifikasiState
                                       downloadDataBerkas(
                                           listUpload[index].id_upload);
                                     },
-                                    child: const Text('OK'),
+                                    child: const Text('Yakin'),
                                   ),
                                 ],
                               ),
@@ -707,7 +726,7 @@ class _LihatDetailBelumDiverifikasiState
                       actions: <Widget>[
                         TextButton(
                           onPressed: () => Navigator.pop(context, 'Cancel'),
-                          child: const Text('Cancel'),
+                          child: const Text('Batal'),
                         ),
                         TextButton(
                           onPressed: () {
@@ -747,12 +766,9 @@ class _LihatDetailBelumDiverifikasiState
                         ),
                         TextButton(
                           onPressed: () {
-                            id = 2;
-                            sendPushMessage(detailReklames!.token,
-                                detailReklames!.no_formulir.toString(), id!);
                             submitBerkasBelumLengkap();
                           },
-                          child: const Text('Kembalikan'),
+                          child: const Text('Yakin'),
                         ),
                       ],
                     ),

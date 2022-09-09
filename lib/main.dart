@@ -89,6 +89,7 @@ Future<void> main() async {
           });
         } else {
           print("VERIFIKATOR");
+
           runApp(MainPageVerifikator());
         }
       });

@@ -235,7 +235,7 @@ class _LihatDetailBerkasDiCabutState extends State<LihatDetailBerkasDiCabut> {
     if (detailReklames == null) {
       return Scaffold(
           appBar: AppBar(
-            title: Text("Berkas Reklame Dicabut"),
+            title: Text("Detail Berkas Reklame Dicabut"),
           ),
           body: Center(
             child: LoadingAnimationWidget.staggeredDotsWave(
@@ -246,7 +246,7 @@ class _LihatDetailBerkasDiCabutState extends State<LihatDetailBerkasDiCabut> {
     } else {
       return Scaffold(
         appBar: AppBar(
-          title: Text("Berkas Reklame Dicabut"),
+          title: Text("Detail Berkas Reklame Dicabut"),
         ),
         body: ListView(
           children: <Widget>[
@@ -261,6 +261,27 @@ class _LihatDetailBerkasDiCabutState extends State<LihatDetailBerkasDiCabut> {
                     textAlign: TextAlign.center,
                   )),
             ),
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
+              child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Alasan Berkas Dicabut : ',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    textAlign: TextAlign.center,
+                  )),
+            ),
+            Container(
+                padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Alasan Berkas Dicabut',
+                  ),
+                  maxLines: 5,
+                  initialValue: detailReklames!.alasan,
+                  enabled: false,
+                )),
             Container(
               padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
               child: Align(

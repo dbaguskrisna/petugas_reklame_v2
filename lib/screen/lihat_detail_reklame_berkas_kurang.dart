@@ -192,7 +192,7 @@ class _LihatDetailBerkasKurangState extends State<LihatDetailBerkasKurang> {
     if (detailReklames == null) {
       return Scaffold(
           appBar: AppBar(
-            title: Text("Reklame belum terverifikasi"),
+            title: Text("Detail Reklame Berkas Belum Lengkap"),
           ),
           body: Center(
             child: LoadingAnimationWidget.staggeredDotsWave(
@@ -207,7 +207,7 @@ class _LihatDetailBerkasKurangState extends State<LihatDetailBerkasKurang> {
             icon: Icon(Icons.arrow_back),
             onPressed: () => Navigator.pushNamed(context, '/berkas-kurang'),
           ),
-          title: Text(" Berkas Belum Lengkap"),
+          title: Text("Detail Reklame Belum Lengkap"),
         ),
         body: ListView(
           children: <Widget>[
@@ -222,6 +222,27 @@ class _LihatDetailBerkasKurangState extends State<LihatDetailBerkasKurang> {
                     textAlign: TextAlign.center,
                   )),
             ),
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
+              child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Alasan Berkas Belum Lengkap : ',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    textAlign: TextAlign.center,
+                  )),
+            ),
+            Container(
+                padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Alasan Berkas Belum Lengkap',
+                  ),
+                  maxLines: 5,
+                  initialValue: detailReklames!.alasan,
+                  enabled: false,
+                )),
             Container(
               padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
               child: Align(

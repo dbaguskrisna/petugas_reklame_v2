@@ -4,7 +4,7 @@ class ProfileWastibs {
   String username;
   String password;
   String status;
-  int nomor_handphone;
+  String nomor_handphone;
   String alamat;
 
   ProfileWastibs(

@@ -24,7 +24,7 @@ class _LihatDetailBelumDiverifikasiState
     extends State<LihatDetailReklameSudahDiverifikasi> {
   DetailReklame? detailReklames;
   List<UploadFiles> listUpload = [];
-
+  TextEditingController alasan = new TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -168,21 +168,31 @@ class _LihatDetailBelumDiverifikasiState
   }
 
   void cabutBerkas() async {
-    final response = await http
-        .put(Uri.parse("http://10.0.2.2:8000/api/cabut_berkas"), body: {
-      'id_reklame': widget.reklame_id.toString(),
-    });
-    if (response.statusCode == 200) {
-      Map json = jsonDecode(response.body);
-      if (json['result'] == 'success') {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Sukses Mencabut Berkas')));
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Nomor Formulir Tidak di Temukan')));
-      }
+    if (alasan.text == '' || alasan.text == null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          duration: Duration(seconds: 3),
+          content: Text(
+              'Tidak dapat mencabut berkas, Silahkan isi alasan terlebih dahulu')));
     } else {
-      print("Failed to read API");
+      final response = await http
+          .put(Uri.parse("http://10.0.2.2:8000/api/cabut_berkas"), body: {
+        'id_reklame': widget.reklame_id.toString(),
+        'alasan': alasan.text
+      });
+      if (response.statusCode == 200) {
+        Map json = jsonDecode(response.body);
+        if (json['result'] == 'success') {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text('Sukses Mencabut Berkas')));
+          sendPushMessage(
+              detailReklames!.token, detailReklames!.no_formulir.toString());
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Nomor Formulir Tidak di Temukan')));
+        }
+      } else {
+        print("Failed to read API");
+      }
     }
   }
 
@@ -191,7 +201,7 @@ class _LihatDetailBelumDiverifikasiState
       'to': token,
       "collapse_key": "type_a",
       "notification": {
-        "body": "Reklame Nomor : $noReklame di Cabut",
+        "body": "Reklame dengan Nomor Formulir : $noReklame di Cabut",
         "title": "Notifikasi eReklame"
       },
     });
@@ -223,7 +233,7 @@ class _LihatDetailBelumDiverifikasiState
     if (detailReklames == null) {
       return Scaffold(
           appBar: AppBar(
-            title: Text("Berkas Sudah di Verifikasi"),
+            title: Text("Detail Berkas Sudah di Verifikasi"),
           ),
           body: Center(
             child: LoadingAnimationWidget.staggeredDotsWave(
@@ -234,7 +244,7 @@ class _LihatDetailBelumDiverifikasiState
     } else {
       return Scaffold(
         appBar: AppBar(
-          title: Text("Berkas Sudah di Verifikasi"),
+          title: Text("Detail Berkas Sudah di Verifikasi"),
         ),
         body: ListView(
           children: <Widget>[
@@ -663,21 +673,24 @@ class _LihatDetailBelumDiverifikasiState
                   onPressed: () => showDialog<String>(
                     context: context,
                     builder: (BuildContext context) => AlertDialog(
-                      title: const Text('Peringatan'),
-                      content: const Text(
-                          'Apakah anda yakin ingin mencabut berkas ini ?'),
+                      title: const Text(
+                          'Apakah anda yakin akan mencabut berkas ini?'),
+                      content: TextFormField(
+                        controller: alasan,
+                        decoration: InputDecoration(
+                            hintText:
+                                ("Silahkan Tulis Alasan Pencabutan Berkas")),
+                      ),
                       actions: <Widget>[
                         TextButton(
                           onPressed: () => Navigator.pop(context, 'Cancel'),
-                          child: const Text('Tidak'),
+                          child: const Text('Batal'),
                         ),
                         TextButton(
                           onPressed: () {
-                            sendPushMessage(detailReklames!.token,
-                                detailReklames!.no_formulir.toString());
                             cabutBerkas();
                           },
-                          child: const Text('Yakin'),
+                          child: const Text('Cabut Berkas'),
                         ),
                       ],
                     ),

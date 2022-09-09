@@ -22,6 +22,8 @@ class _ProfileWastibState extends State<ProfileWastib> {
       TextEditingController(text: profileWastibs?.nomor_handphone.toString());
   final alamat = TextEditingController(text: profileWastibs?.alamat);
   final _formKey = GlobalKey<FormState>();
+  final GlobalKey<ScaffoldMessengerState> snackbarKey =
+      GlobalKey<ScaffoldMessengerState>();
 
   void doLogout() async {
     final prefs = await SharedPreferences.getInstance();
@@ -39,7 +41,6 @@ class _ProfileWastibState extends State<ProfileWastib> {
   bacaData() {
     fetchData().then((value) {
       Map json = jsonDecode(value);
-      print(json['data'][0]);
       profileWastibs = ProfileWastibs.fromJson(json['data'][0]);
       setState(() {});
     });
@@ -57,9 +58,34 @@ class _ProfileWastibState extends State<ProfileWastib> {
     }
   }
 
+  void updateProfile() async {
+    final response = await http
+        .put(Uri.parse("http://10.0.2.2:8000/api/update_petugas"), body: {
+      'email': active_username,
+      'nama_petugas': nama_lengkap.text.toString(),
+      'nomor_handphone': nomor_handphone.text.toString(),
+      'alamat': alamat.text.toString()
+    });
+
+    if (response.statusCode == 200) {
+      Map json = jsonDecode(response.body);
+      print(json);
+      if (json['result'] == 'success') {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Sukses Menambah Data')));
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Update Profile Gagal')));
+      }
+    } else {
+      print("failed to read API");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
+      key: _formKey,
       child: Scaffold(
         appBar: AppBar(
           title: Text("Petugas Wastib"),
@@ -137,7 +163,7 @@ class _ProfileWastibState extends State<ProfileWastib> {
                     border: OutlineInputBorder()),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter some text';
+                    return 'Mohon masukkan nama lengkap';
                   }
                   return null;
                 },
@@ -159,7 +185,7 @@ class _ProfileWastibState extends State<ProfileWastib> {
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter some text';
+                          return 'Masukkan nomor handphone';
                         }
                         return null;
                       },
@@ -180,7 +206,7 @@ class _ProfileWastibState extends State<ProfileWastib> {
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter some text';
+                    return 'Masukkan alamat';
                   }
                   return null;
                 },
@@ -191,7 +217,11 @@ class _ProfileWastibState extends State<ProfileWastib> {
                 padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
                 child: ElevatedButton(
                   child: Text("Update Profile"),
-                  onPressed: () {},
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      updateProfile();
+                    }
+                  },
                 )),
           ],
         ),
