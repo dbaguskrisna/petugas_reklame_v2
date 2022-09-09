@@ -16,11 +16,9 @@ class ProfileWastib extends StatefulWidget {
 class _ProfileWastibState extends State<ProfileWastib> {
   static ProfileWastibs? profileWastibs;
 
-  final nama_lengkap =
-      TextEditingController(text: profileWastibs?.nama_petugas);
-  final nomor_handphone =
-      TextEditingController(text: profileWastibs?.nomor_handphone.toString());
-  final alamat = TextEditingController(text: profileWastibs?.alamat);
+  final nama_lengkap = TextEditingController();
+  final nomor_handphone = TextEditingController();
+  final alamat = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldMessengerState> snackbarKey =
       GlobalKey<ScaffoldMessengerState>();
@@ -42,7 +40,11 @@ class _ProfileWastibState extends State<ProfileWastib> {
     fetchData().then((value) {
       Map json = jsonDecode(value);
       profileWastibs = ProfileWastibs.fromJson(json['data'][0]);
-      setState(() {});
+      setState(() {
+        nama_lengkap.text = profileWastibs!.nama_petugas;
+        nomor_handphone.text = profileWastibs!.nomor_handphone;
+        alamat.text = profileWastibs!.alamat;
+      });
     });
   }
 
@@ -69,10 +71,9 @@ class _ProfileWastibState extends State<ProfileWastib> {
 
     if (response.statusCode == 200) {
       Map json = jsonDecode(response.body);
-      print(json);
       if (json['result'] == 'success') {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Sukses Menambah Data')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Sukses Melakukan Update Profile')));
       } else {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Update Profile Gagal')));
